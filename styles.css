@@ -1,0 +1,154 @@
+* {
+    font-family: "Poppins", "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}   
+
+/*header*/
+
+body>header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    background-color: rgb(231, 231, 231);
+    font-size: 30px;
+    margin-bottom:10px;  
+}
+
+a[href="main.html"] {margin-right:10px;}
+
+#home {
+    width: 47px;
+    height:47px;
+    background-color: rgb(189, 219, 255);
+    display: flex; 
+    padding:7px;
+}
+    
+/*footer*/
+
+footer {
+    margin-top: 10px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    background-color: rgb(231, 231, 231);
+    position: relative; 
+}
+
+footer a {
+    margin: 4px;
+    padding: 8px;  
+    border-radius: 15px;
+    display:flex;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    transition: background-color .15s linear;
+}
+
+footer a:hover {
+    background-color: rgb(169, 209, 255);
+}
+
+/*courses*/
+
+.school{
+    padding: 10px 0;
+    font-size: 32px;
+    font-weight: 500;
+}  
+
+.courses, #experiences, #projects, #games{
+    display:flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.courses>li, #experiences>li, #projects>li, #games>a{
+    display: flex;
+    background-color: rgb(189, 219, 255);
+    border-radius: 20px;
+    align-items: center;
+    color:black;
+    list-style-type: none;
+}
+
+.courses>li{
+    margin: 12px;
+    height:60px;
+    font-size: 20px;
+    width: 640px;
+
+    span{
+        background-color: rgb(129, 188, 255);
+        padding:4px;
+        border-radius: 10px;
+        font-weight: 500;
+        margin-left: 10px;
+    }
+
+    p{margin-left:10px}
+}
+
+/*experiences*/
+
+#experiences>li{
+    width: 700px;
+    height: 400px;
+    margin: 20px;
+    padding: 20px;
+    flex-direction: column;
+}
+
+.experiencehead{
+    display: flex;
+    flex-direction: columns;
+    img{
+        width: 100px;
+        height: 100px;
+        border-radius: 20%;
+    }
+    header{
+        font-size: 50px;
+        margin-top: -10px;
+        margin-left: 20px;
+        font-weight:500;
+        display:flex;
+        flex-direction: column;
+    }
+    span{
+        margin-top: -5px;
+        color:rgb(102, 102, 102);
+        font-size: 25px;
+    }
+}
+
+.bullets>li{
+    margin:20px 20px 20px 30px;
+    list-style-type: disc;
+    font-size: 20px;
+}
+
+/*games*/
+
+#games>a{
+    width: 500px;
+    height: 500px;
+    margin: 30px;
+    justify-content: center;
+    font-size: 50px;
+    transition: transform 0.4s ease;
+    text-decoration: none;
+}
+
+#games>a:hover {
+    background-color: rgb(169, 209, 255);
+    transform: scale(1.08);
+}   
