@@ -4,7 +4,7 @@
     <meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="apple-touch-icon" sizes="180x180" href="favicon/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="favicon/favicon-32x32.png"> 
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="favicon/favicon-16x16.png">
     <link rel="manifest" href="favicon/site.webmanifest">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -17,16 +17,43 @@
     <title>Projects</title>
 </head>
 <body>
-    <header>
-       <a href = "index.html">       
-            <div>
-                <img src = "images/home.png" alt = "home icon" id = "home">
-            </div>
+    <header class="content-header">
+        <a href = "index.html" class="home-container">
+            <img src = "images/home.png" alt = "home icon" class = "home">
        </a>
        Projects
     </header>
-    <main>
-
+    <main class="content-main">
+        <ul id = "projects" class="container">
+            <li class="item">
+                <header class = "item-title">
+                    <h2>TritonTool  <a href="https://github.com/alexhamidi/TritonTool"><img src="images/github.png" alt="github icon" class="github-icon"></a></h2>
+                    <h3> JS, React, Express, PostgreSQL </h3>
+                </header>
+                <img class="project-picture" src="images/tritontool.png" alt="tritontool image">
+                <p class="project-description">
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
+                    labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris
+                    nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit
+                    esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt
+                    in culpa qui officia deserunt mollit anim id est laborum.
+                </p>
+            </li>
+            <li class="item">
+                <header class = "item-title">
+                    <h2> PlayNext <a href="https://github.com/alexhamidi/PlayNext"><img src="images/github.png" alt="github icon" class="github-icon"></a></h2>
+                    <h3> JS, Python, Pytorch, Redis </h3>
+                </header>
+                <img class="project-picture" src="images/playnext.png" alt="playnext image">
+                <p class="project-description">
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
+                    labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris
+                    nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit
+                    esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt
+                    in culpa qui officia deserunt mollit anim id est laborum.
+                </p>
+            </li>
+        </ul>
     </main>
     <footer>
         <a href = "https://www.linkedin.com/in/alexander-hamidi-208736254/">
@@ -36,11 +63,14 @@
         <a href = "mailto:alexanderhamidi1@gmail.com">
             <img src = "images/gmail.png" alt = "email icon" id = "gmail">
         </a>
-        
+
         <a href = "https://github.com/alexhamidi">
             <img src = "images/github.png" alt = "github icon" id = "github">
         </a>
     </footer>
 </body>
 </html>
+<script>
+
+</script>
 
