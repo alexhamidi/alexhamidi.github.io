@@ -8,7 +8,10 @@ main {
     display: flex;
     flex-direction: column;
     align-items: center;
-}   
+}
+
+
+
 
 /*header*/
 
@@ -18,7 +21,7 @@ body>header {
     align-items: center;
     background-color: rgb(231, 231, 231);
     font-size: 30px;
-    margin-bottom:10px;  
+    margin-bottom:10px;
 }
 
 a[href="index.html"] {margin-right:10px;}
@@ -27,10 +30,10 @@ a[href="index.html"] {margin-right:10px;}
     width: 47px;
     height:47px;
     background-color: rgb(189, 219, 255);
-    display: flex; 
+    display: flex;
     padding:7px;
 }
-    
+
 /*footer*/
 
 footer {
@@ -39,12 +42,12 @@ footer {
     flex-direction: row;
     justify-content: center;
     background-color: rgb(231, 231, 231);
-    position: relative; 
+    position: relative;
 }
 
 footer a {
     margin: 4px;
-    padding: 8px;  
+    padding: 8px;
     border-radius: 15px;
     display:flex;
     justify-content: center;
@@ -57,13 +60,76 @@ footer a:hover {
     background-color: rgb(169, 209, 255);
 }
 
+/*main*/
+
+#index-header{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    margin-top: 60px;
+}
+
+#headshot {
+    border-radius: 500px;
+    width :210px ;
+    height :210px;
+    margin-right: 45px;
+}
+
+#index-main {
+    padding: 90px 10px 0 10px ;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+}
+
+main a {
+    width:290px;
+    height: 290px;
+    border-radius: 10px;
+    background-color: rgb(189, 219, 255);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: black;
+    font-size: 30px;
+    transition: transform 0.4s ease;
+    flex-direction: column;
+}
+
+#header-left{
+    font-size:72px;
+    font-weight: 500;
+}
+
+#header-right{
+    font-size:40px;
+}
+
+main a:hover {
+    transform:scale(1.03);
+    background-color: rgb(169, 209, 255);
+}
+
+#educationicon, #gamesicon {
+    width :150px;
+    height:150px;
+}
+
+#experiencesicon, #projectsicon {
+    width :130px;
+    height:130px;
+    margin-bottom: 20px;
+}
+
 /*courses*/
 
 .school{
     padding: 10px 0;
     font-size: 32px;
     font-weight: 500;
-}  
+}
 
 .courses, #experiences, #projects, #games{
     display:flex;
@@ -151,4 +217,4 @@ footer a:hover {
 #games>a:hover {
     background-color: rgb(169, 209, 255);
     transform: scale(1.08);
-}   
+}

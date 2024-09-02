@@ -12,137 +12,22 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
     <meta name="msapplication-TileColor" content="#da532c">
     <meta name="theme-color" content="#ffffff">
+    <link rel="stylesheet" href = "styles/styles.css">
     <title>Alex's Webpage!</title>
-    <style>
-        
-    body{overflow: hidden;}
-
-    a {text-decoration: none;}
-
-    *{
-        font-family:"Poppins", "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
-    }
-
-    header {
-        display: flex;
-        flex-direction: row;
-        justify-content: center;
-        align-items: center;
-        margin-top: 60px;
-    }
-
-    #headshot {
-        border-radius: 500px;
-        width :210px ;
-        height :210px;
-        margin-right: 45px;
-    }
-
-
-    footer {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        justify-content: center;
-        background-color: rgb(231, 231, 231);
-        position: fixed; 
-        bottom: 0;
-        left: 0;
-        width:100%;
-    }
-
-    footer a {
-        margin: 4px;
-        padding: 9px;  
-        border-radius: 15px;
-        display:flex;
-        align-items: center;
-        justify-content: center;
-        width: 30px;
-        height: 30px;
-        transition: background-color 0.15s linear;
-    }
-
-    footer a:hover {
-        background-color: rgb(169, 209, 255);
-    }
-    
-
-    #github, #linkedin {
-        width: 30px;
-        height: 30px;
-    }
-
-    #gmail {
-        width:40px;
-        height: 30px;
-    }
-
-
-    main {
-        padding: 90px 10px 0 10px ;
-        display: flex;
-        flex-direction: row;
-        justify-content: space-around; 
-    }
-
-    main a {
-        width:290px;
-        height: 290px;
-        border-radius: 10px;
-        background-color: rgb(189, 219, 255);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        color: black;
-        font-size: 30px;
-        transition: transform 0.4s ease;
-        flex-direction: column;
-    }
-
-    #header1{
-        font-size:72px;
-        font-weight: 500;
-    }
-
-    #header2{
-        font-size:40px;
-    }
-
-    main a:hover {
-        transform:scale(1.05);
-        background-color: rgb(169, 209, 255);
-    }
-    
-    #educationicon, #gamesicon {
-        width :150px;
-        height:150px;
-    }
-
-    #experiencesicon, #projectsicon {
-        width :130px;
-        height:130px;
-        margin-bottom: 20px;
-    }
-
-
-
-    </style>
 </head>
 
 
-
 <body>
-    <header>
+    <header id = "index-header">
         <picture>
             <img src = "images/me.jpeg" id = "headshot">
         </picture>
-        <div id = "headertext">
-            <div id = "header1"> Hi, I'm Alex Hamidi, </div>
-            <div id = "header2"> a computer science major at UCSD.</div>
+        <div id = "header-text">
+            <div id = "header-text-left"> Hi, I'm Alex Hamidi, </div>
+            <div id = "header-text-right"> a computer science major at UCSD.</div>
         </div>
     </header>
-    <main>
+    <main id = "index-main">
         <section>
             <a href = "courses.html">
                 <img src = "images/courses.png" alt = "education icon" id = "educationicon">
@@ -161,13 +46,6 @@
                 Projects
             </a>
         </section>
-        <!-- <section> 
-            <a href = "games.html">
-                <img src = "images/games.png" alt = "games icon" id = "gamesicon">
-                Games
-            </a>
-        </section> -->
-
     </main>
     <footer>
         <a href = "https://www.linkedin.com/in/alexander-hamidi-208736254/">
@@ -177,7 +55,7 @@
         <a href = "mailto:alexanderhamidi1@gmail.com">
             <img src = "images/gmail.png" alt = "email icon" id = "gmail">
         </a>
-        
+
         <a href = "https://github.com/alexhamidi">
             <img src = "images/github.png" alt = "github icon" id = "github">
         </a>
