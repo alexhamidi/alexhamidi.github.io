@@ -159,7 +159,7 @@ main a {
     margin: 12px;
     height:60px;
     font-size: 20px;
-    width: 640px;
+    width: 730px;
 }
 
 .courses .item span{
@@ -244,3 +244,6 @@ main a {
     margin: 20px 0;
 }
 
+.project-description{
+    font-size: 1.1em;
+}
