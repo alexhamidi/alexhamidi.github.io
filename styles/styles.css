@@ -9,12 +9,15 @@ section {
 }
 
 h1 {
+    user-select: none;
     font-family: monospace;
     padding-right: 20px;
 }
 
 body {
-    user-select: none;
+    color: #222;
+    font-family: georgia;
+    background-color: #fcfcfa;
     display: flex;
     justify-content: center;
     align-items: center;
