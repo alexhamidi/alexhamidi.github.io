@@ -7,3 +7,17 @@ section {
 #email {
     font-family: monospace;
 }
+
+h1 {
+    font-family: monospace;
+    padding-right: 20px;
+}
+
+body {
+    user-select: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 90vh;
+    overflow: hidden;
+}
