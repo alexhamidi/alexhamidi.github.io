@@ -9,7 +9,6 @@ section {
 }
 
 h1 {
-    user-select: none;
     font-family: monospace;
     padding-right: 20px;
 }
