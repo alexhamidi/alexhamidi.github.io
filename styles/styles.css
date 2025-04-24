@@ -14,12 +14,14 @@ h1 {
 }
 
 body {
+    padding: 0px;
+    margin: 0px;
+    height: 100vh;
     color: #222;
     font-family: georgia;
     background-color: #fcfcfa;
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 90vh;
     overflow: hidden;
 }
