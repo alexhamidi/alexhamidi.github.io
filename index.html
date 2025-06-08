@@ -28,6 +28,30 @@
         <span>Please reach out and say hello - email me here: [<span id="email">alexanderhamidi1@gmail.com</span>] or connect with me <a rel="noopener noreferrer" target="_blank" href="https://www.linkedin.com/in/alexander-hamidi-208736254/">here.</a></span>
 
     </section>
+    <div id="tooltip">copy</div>
+    <script>
+        const tooltip = document.getElementById('tooltip');
+        const email = document.getElementById('email');
+
+        email.addEventListener('mousemove', (e) => {
+            tooltip.style.opacity = '1';
+            tooltip.style.left = (e.clientX + 10) + 'px';
+            tooltip.style.top = (e.clientY + 10) + 'px';
+        });
+
+        email.addEventListener('mouseleave', () => {
+            tooltip.style.opacity = '0';
+            tooltip.textContent = 'copy';
+        });
+
+        email.addEventListener('click', function() {
+            navigator.clipboard.writeText(this.textContent);
+            tooltip.textContent = 'copied!';
+            setTimeout(() => {
+                tooltip.textContent = 'copy';
+            }, 1000);
+        });
+    </script>
 </body>
 </html>
 

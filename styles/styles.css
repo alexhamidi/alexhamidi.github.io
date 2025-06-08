@@ -7,6 +7,14 @@ section {
 
 #email {
     font-family: monospace;
+    cursor: default;
+    text-decoration: underline;
+    transition: color 0.5s ease;
+}
+
+#email:hover {
+    color: #121212;
+    background-color: #fcfcfa;
 }
 
 h1 {
@@ -14,15 +22,40 @@ h1 {
     padding-right: 30px;
 }
 
+a {
+  text-decoration: underline;
+  color: #fcfcfa;
+  transition: color 0.5s ease;
+  cursor: pointer;
+}
+a:hover {
+  color: #121212;
+  background-color: #fcfcfa;
+}
+
 body {
     padding: 0px;
     margin: 0px;
     height: 100vh;
-    color: #222;
+    color: #fcfcfa;
     font-family: georgia;
-    background-color: #fcfcfa;
+    /* background-color: #fcfcfa; */
+    background-color: #121212;
     display: flex;
     justify-content: center;
     align-items: center;
     overflow: hidden;
+}
+
+#tooltip {
+    position: fixed;
+    border: 1px solid #fcfcfa;
+    color: #fcfcfa;
+    background-color: #121212;
+    padding: 4px 8px;
+    font-size: 12px;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    font-family: monospace;
 }
