@@ -6,7 +6,6 @@ section {
 }
 
 #email {
-    font-family: monospace;
     cursor: default;
     text-decoration: underline;
     transition: color 0.5s ease;
