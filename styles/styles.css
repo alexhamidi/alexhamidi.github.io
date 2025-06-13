@@ -1,3 +1,13 @@
+@font-face {
+    font-family: 'Recoleta';
+    src: url('../fonts/Recoleta-Regular.woff2') format('woff2'),
+         url('../fonts/Recoleta-Regular.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+
+
 section {
     display: flex;
     flex-direction: column;
@@ -43,6 +53,8 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
+    /* font-family: 'Recoleta', serif; */
+    font-size: 24px;
     overflow: hidden;
 }
 
