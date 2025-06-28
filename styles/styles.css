@@ -47,7 +47,7 @@ body {
     margin: 0px;
     height: 100vh;
     color: #fcfcfa;
-    font-family: georgia;
+    font-family: monospace;
     /* background-color: #fcfcfa; */
     background-color: #121212;
     display: flex;
