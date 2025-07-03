@@ -23,26 +23,31 @@
         <br/>
 
         <!-- <span>Right now, i'm working on <a rel="noopener noreferrer" target="_blank" href="https://tryforsite.com/">semantic search for projects</a> and in the early stages of a <a rel="noopener noreferrer" target="_blank" href="https://www.panoptica.dev/">desktop copilot agent</a></span> -->
-        <span>Currently, i'm working on <a rel="noopener noreferrer" target="_blank" href="https://clado.ai/search">clado.ai</a> and tinkering on the side.</span>
+        <span>Currently, i'm founding engineering at <a rel="noopener noreferrer" target="_blank" href="https://clado.ai/search">clado.ai</a> and <a rel="noopener noreferrer" target="_blank" href="https://x.com/ahamidi_/status/1940300947760292224">tinkering</a> and <span id="reading">reading</span> on the side.</span>
         <br/>
-        <span>I recently scaled and sold a startup simplifying document redaction for federal agencies, </a></span>
-        <span>worked on <a rel="noopener noreferrer" target="_blank" href="https://tryforsite.com/">semantic search for projects</a> and a <a rel="noopener noreferrer" target="_blank" href="https://www.graphitapp.com">graph editor,</a></span>
-
-        <span>and built stuff to make it easier to <a rel="noopener noreferrer" target="_blank" href="https://monotool.vercel.app">manage</a> and  <a rel="noopener noreferrer" target="_blank" href="https://automcp.app">deploy</a>   MCP servers.</a></span>
+        <span>I recently:
+            <ul>
+                <li>worked on <a rel="noopener noreferrer" target="_blank" href="https://tryforsite.com/">semantic search for projects</a> and a <a rel="noopener noreferrer" target="_blank" href="https://www.graphitapp.com">graph editor</a></li>
+                <li>built stuff to make it easier to <a rel="noopener noreferrer" target="_blank" href="https://monotool.vercel.app">manage</a> and  <a rel="noopener noreferrer" target="_blank" href="https://automcp.app">deploy</a>   MCP servers</li>
+                <li>scaled and sold a startup simplifying document redaction for federal agencies</li>
+            </ul>
+        </span>
         <br/>
 
-        <span>connect with me: [<span id="email">email</span>]&nbsp;[<a rel="noopener noreferrer" target="_blank" href="https://www.linkedin.com/in/alexander-hamidi-208736254/">linkedin</a>]&nbsp;[<a rel="noopener noreferrer" target="_blank" href="https://github.com/alexhamidi/">github</a>]&nbsp;[<a rel="noopener noreferrer" target="_blank" href="https://twitter.com/ahamidi_">twitter</a>]</span>
+        I'm based in SF and enjoy meeting cool people. <span>Connect with me: [<span id="email">email</span>]&nbsp;[<a rel="noopener noreferrer" target="_blank" href="https://www.linkedin.com/in/alexander-hamidi-208736254/">linkedin</a>]&nbsp;[<a rel="noopener noreferrer" target="_blank" href="https://github.com/alexhamidi/">github</a>]&nbsp;[<a rel="noopener noreferrer" target="_blank" href="https://twitter.com/ahamidi_">twitter</a>]</span>
 
     </section>
     <div id="tooltip">copy</div>
     <script>
         const tooltip = document.getElementById('tooltip');
         const email = document.getElementById('email');
+        const reading = document.getElementById('reading');
 
         email.addEventListener('mousemove', (e) => {
             tooltip.style.opacity = '1';
             tooltip.style.left = (e.clientX + 10) + 'px';
             tooltip.style.top = (e.clientY + 10) + 'px';
+            tooltip.textContent = 'copy';
         });
 
         email.addEventListener('mouseleave', () => {
@@ -56,6 +61,17 @@
             setTimeout(() => {
                 tooltip.textContent = 'copy';
             }, 1000);
+        });
+
+        reading.addEventListener('mousemove', (e) => {
+            tooltip.style.opacity = '1';
+            tooltip.style.left = (e.clientX + 10) + 'px';
+            tooltip.style.top = (e.clientY + 10) + 'px';
+            tooltip.innerHTML = '<i>republic</i> by plato';
+        });
+
+        reading.addEventListener('mouseleave', () => {
+            tooltip.style.opacity = '0';
         });
     </script>
 </body>

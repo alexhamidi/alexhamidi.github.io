@@ -15,13 +15,14 @@ section {
     text-align: justify;
 }
 
-#email {
+
+#email, #reading {
     cursor: default;
     text-decoration: underline;
     transition: color 0.5s ease;
 }
 
-#email:hover {
+#email:hover, #reading:hover {
     color: #121212;
     background-color: #fcfcfa;
 }
@@ -56,6 +57,12 @@ body {
     /* font-family: 'Recoleta', serif; */
     font-size: 24px;
     overflow: hidden;
+}
+
+ul {
+    gap: 10px;
+    display: flex;
+    flex-direction: column;
 }
 
 #tooltip {
