@@ -17,14 +17,16 @@
 
 
 <body>
-    <!-- <h1>alex hamidi</h1> -->
+    <div class="container">
+    <h1>alex hamidi</h1>
     <section>
+        <span class="toprow"">
+            <a href="writing/index.html">other things</a></span>
+    
         <span>Hello! I'm Alex. I studied computer science at UCSD and I deeply enjoy building things.</span>
-        <br/>
 
         <!-- <span>Right now, i'm working on <a rel="noopener noreferrer" target="_blank" href="https://tryforsite.com/">semantic search for projects</a> and in the early stages of a <a rel="noopener noreferrer" target="_blank" href="https://www.panoptica.dev/">desktop copilot agent</a></span> -->
         <span>Currently, i'm engineering at <a rel="noopener noreferrer" target="_blank" href="https://clado.ai/search">clado.ai</a> and <a rel="noopener noreferrer" target="_blank" href="https://x.com/ahamidi_/status/1940300947760292224">tinkering</a> and <span id="reading">reading</span> on the side.</span>
-        <br/>
         <span>I recently:
             <ul>
                 <li>worked on <a rel="noopener noreferrer" target="_blank" href="https://tryforsite.com/">semantic search for projects</a> and a <a rel="noopener noreferrer" target="_blank" href="https://www.graphitapp.com">graph editor</a></li>
@@ -32,16 +34,24 @@
                 <li>scaled and sold a startup simplifying document redaction for federal agencies</li>
             </ul>
         </span>
-        <br/>
 
-        I'm based in SF and enjoy meeting cool people. <span>Connect with me: [<span id="email">email</span>]&nbsp;[<a rel="noopener noreferrer" target="_blank" href="https://www.linkedin.com/in/alexander-hamidi-208736254/">linkedin</a>]&nbsp;[<a rel="noopener noreferrer" target="_blank" href="https://github.com/alexhamidi/">github</a>]&nbsp;[<a rel="noopener noreferrer" target="_blank" href="https://twitter.com/ahamidi_">twitter</a>]</span>
+
+        I'm based in SF and like meeting cool people. 
+  
+        <span class="bottomrow">
+            [<span id="email">email</span>]&nbsp;[<a rel="noopener noreferrer" target="_blank" href="https://www.linkedin.com/in/alexander-hamidi-208736254/">linkedin</a>]&nbsp;[<a rel="noopener noreferrer" target="_blank" href="https://github.com/alexhamidi/">github</a>]&nbsp;[<a rel="noopener noreferrer" target="_blank" href="https://twitter.com/ahamidi_">twitter</a>]</span>
+       
 
     </section>
+</div>
     <div id="tooltip">copy</div>
     <script>
         const tooltip = document.getElementById('tooltip');
         const email = document.getElementById('email');
         const reading = document.getElementById('reading');
+        
+        // Replace this with your actual email address
+        const actualEmail = 'alexanderhamidi1@gmail.com';
 
         email.addEventListener('mousemove', (e) => {
             tooltip.style.opacity = '1';
@@ -56,7 +66,7 @@
         });
 
         email.addEventListener('click', function() {
-            navigator.clipboard.writeText(this.textContent);
+            navigator.clipboard.writeText(actualEmail);
             tooltip.textContent = 'copied!';
             setTimeout(() => {
                 tooltip.textContent = 'copy';
@@ -67,7 +77,7 @@
             tooltip.style.opacity = '1';
             tooltip.style.left = (e.clientX + 10) + 'px';
             tooltip.style.top = (e.clientY + 10) + 'px';
-            tooltip.innerHTML = '<i>republic</i> by plato';
+            tooltip.innerHTML = '<i>chip war</i> by chris miller';
         });
 
         reading.addEventListener('mouseleave', () => {

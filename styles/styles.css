@@ -1,21 +1,3 @@
-@font-face {
-    font-family: 'Recoleta';
-    src: url('../fonts/Recoleta-Regular.woff2') format('woff2'),
-         url('../fonts/Recoleta-Regular.woff') format('woff');
-    font-weight: normal;
-    font-style: normal;
-}
-
-
-
-section {
-    display: flex;
-    flex-direction: column;
-    gap: 30px;
-    text-align: justify;
-}
-
-
 #email, #reading {
     cursor: default;
     text-decoration: underline;
@@ -23,57 +5,66 @@ section {
 }
 
 #email:hover, #reading:hover {
-    color: #121212;
-    background-color: #fcfcfa;
-}
-
-h1 {
-    font-family: monospace;
-    padding-right: 30px;
+    color: #fcfcfa;
+    background-color: #121212;
 }
 
 a {
-  text-decoration: underline;
-  color: #fcfcfa;
-  transition: color 0.5s ease;
-  cursor: pointer;
+    text-decoration: underline;
+    color: #121212;
+    transition: color 0.5s ease;
+    cursor: pointer;
 }
 a:hover {
-  color: #121212;
-  background-color: #fcfcfa;
+color: #fcfcfa;
+background-color: #353333;
 }
 
-body {
-    padding: 0px;
-    margin: 0px;
-    height: 100vh;
-    color: #fcfcfa;
-    font-family: monospace;
-    /* background-color: #fcfcfa; */
-    background-color: #121212;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    /* font-family: 'Recoleta', serif; */
-    font-size: 24px;
-    overflow: hidden;
-}
-
-ul {
-    gap: 10px;
-    display: flex;
-    flex-direction: column;
-}
+  
 
 #tooltip {
     position: fixed;
-    border: 1px solid #fcfcfa;
-    color: #fcfcfa;
-    background-color: #121212;
+    border: 1px solid #353333;
+    color: #353333;
+    background-color: #fcfcfa;
     padding: 4px 8px;
     font-size: 12px;
     pointer-events: none;
     opacity: 0;
     transition: opacity 0.2s ease;
     font-family: monospace;
+}
+
+body {
+    padding: 0px;
+    margin: 0px;
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    
+    color: #121212;
+    font-family: monospace;
+    background-color: #fcfcfa;
+    /* font-family: 'Recoleta', serif; */
+    overflow: hidden;
+}
+
+
+section {
+    display: flex;
+    flex-direction: column;
+    gap:30px
+}
+
+.container {
+    max-width: 50vw;
+}
+
+ul {
+    gap: 10px;
+    display: flex;
+    flex-direction: column;
 }
