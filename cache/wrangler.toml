@@ -1,0 +1,7 @@
+name = "cache-api"
+main = "src/index.ts"
+compatibility_date = "2025-08-08"
+
+[[kv_namespaces]]
+binding = "CACHE_KV"
+id = "a06e130167d646a5acbee3ae83f6d396"

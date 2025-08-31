@@ -1,5 +1,5 @@
 {
-  "name": "..",
+  "name": "cache",
   "scripts": {
     "dev": "bun run --hot src/index.ts"
   },
