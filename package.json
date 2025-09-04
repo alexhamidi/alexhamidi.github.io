@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "md-to-blog": "node md-to-blog.js"
   },
   "devDependencies": {
     "typescript": "~5.8.3",
