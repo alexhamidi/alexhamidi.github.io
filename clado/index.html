@@ -1,0 +1,73 @@
+A few months ago, I joined [Clado](https://clado.ai/) as a software engineer. My internship has since ended, but I wanted to share a bit about my contributions to clado’s people search engine, which performs [better than all competitors](https://pbs.twimg.com/media/GwLWi2lWoAAGpOc?format=jpg&name=medium) on [pearch.ai’](https://pearch.ai/)s sourcing [benchmark](https://arxiv.org/pdf/2504.02463). 
+
+As a primer, the search algorithm has two steps
+
+1. generate a database query based on the user’s input
+2. filter returned profiles in parallel using large language models.
+
+Before I joined, our [Deep Research API](https://docs.clado.ai/api-reference/endpoint/initiate-deep-research) repeatedly applied the above steps until the desired number of results were found, deduplicating results across searches.
+
+Even though it (mostly) worked, this approached flawed because of diminishing returns. In fact, plotted against, the pattern is clear:
+
+![Graph Diminishing Returns.png](attachment:f5ef5ae9-4381-43f6-b569-d627fdc797d0:Graph_Diminishing_Returns.png)
+
+Assuming the variance is something like…  .25 then the rate of gain is exactly:… 1.2
+
+since our filtering step is LLM-based, this led to thousands of inference calls wasted on duplicate profiles that would be discarded anyways/
+
+My solution to this problem was to create a generation step designed form the ground up over recall rather than precision. For our next postraitning run, I applied 
+
+This led to my first postraining run on Qwen-8b with  the following reward function:
+
+```latex
+quantityff = tanhsf
+ff
+```
+
+in order to prevent bias toward:
+
+```jsx
+....
+```
+
+this run was successful, and we were able to hot swap, which led to something like 20x speed and cost improvement.
+
+at this point, we ha already 2 separate posttrained models, and decided to switch into to ElasticSearch since it’s full text search was stronger & faster than SQL. However, this would mean. to make sure we
+
+create a new DSL specializeed for our use case - criteria based queries. 
+
+In addition to interoperability between arbitrary query languages/dialects, there were a few other notable benefits of designing a new language just for our use case
+
+1. openserach ql is verbose, and …: 
+
+```jsx
+{shit language}
+```
+
+1. allows for criteria based searches
+2. new meta/descriptime vla
+
+after testng ,
+
+Those who used.
+
+Now, I know what you may be thinking , I assumed the strong *priors* of the model would . its basic intu
+
+however, we found that this is *not* the case with small models you are posttraining. this was one of the most important realizations i had at clado. 
+
+were dual. little segue to talk about RL
+
+lower hallucination
+
+- fine tuning, deciding reward function (make it sound as mathy/research as possible)
+
+building
+
+## why not just fine tune everything
+
+- eval model
+- final ree
+
+now, … . we suggest, and stay posted for any BIg updates for the clado team :)
+
+citations:
