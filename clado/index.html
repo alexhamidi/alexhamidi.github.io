@@ -4,10 +4,9 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="apple-touch-icon" sizes="180x180" href="favicon/apple-touch-icon.png">
-  <link rel="icon" type="image/png" sizes="32x32" hrelf="favicon/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="favicon/favicon-16x16.png">
-  <link rel="manifest" href="favicon/site.webmanifest">
+  <link rel="apple-touch-icon" sizes="180x180" href="../favicon/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="../favicon/favicon-16x16.png">
+  <link rel="manifest" href="../favicon/site.webmanifest">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <meta name="msapplication-TileColor" content="#da532c">
@@ -17,44 +16,6 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css">
   <title>Building SoTA People Search @ Clado - Alex Hamidi</title>
-  <style>
-    .blog-content h3 {
-      font-size: 1.25rem;
-      font-weight: 600;
-      margin-top: 2rem;
-      margin-bottom: 1rem;
-    }
-    .blog-content p {
-      margin-bottom: 1rem;
-      line-height: 1.6;
-      font-size: .875rem;
-    }
-    .blog-content ul {
-      margin: 1rem 0;
-      padding-left: 1.5rem;
-    }
-    .blog-content li {
-      margin-bottom: 0.5rem;
-    }
-    .blog-content pre {
-      background: #f8f9fa;
-      border: 1px solid #e9ecef;
-      border-radius: 0.5rem;
-      padding: 1rem;
-      overflow-x: auto;
-      margin: 1rem 0;
-    }
-    .blog-content code {
-      background: #f8f9fa;
-      padding: 0.125rem 0.25rem;
-      border-radius: 0.25rem;
-      font-size: 0.875rem;
-    }
-    .blog-content pre code {
-      background: none;
-      padding: 0;
-    }
-  </style>
 </head>
 
 <body class="flex flex-col items-center text-gray-900 font-mono overflow-x-hidden bg-[#fcfcfa] color-[#121212]">
@@ -66,29 +27,30 @@
       <div class="text-xs text-gray-500">August 2024</div>
     </div>
 
-    <article class="blog-content">
+    <article>
       <h1 class="text-3xl font-bold mb-2">Building SoTA People Search @ Clado</h1>
       
-      <h3>Background</h3>
+      <h3 class="text-xl font-semibold mt-8 mb-4">Background</h3>
       
-      <p>A few months ago, I joined <a href="https://clado.ai/" class="underline text-gray-900 transition-all duration-500 hover:text-gray-50 hover:bg-gray-700 px-0.5">Clado</a> as a software engineer. My internship has since ended, but I wanted to share a bit about some of my biggest contributions to clado's people search engine, which performs <a href="https://pbs.twimg.com/media/GwLWi2lWoAAGpOc?format=jpg&name=medium" class="underline text-gray-900 transition-all duration-500 hover:text-gray-50 hover:bg-gray-700 px-0.5">better than all competitors</a> on <a href="https://pearch.ai/" class="underline text-gray-900 transition-all duration-500 hover:text-gray-50 hover:bg-gray-700 px-0.5">pearch.ai's</a> sourcing <a href="https://arxiv.org/pdf/2504.02463" class="underline text-gray-900 transition-all duration-500 hover:text-gray-50 hover:bg-gray-700 px-0.5">benchmark</a>.</p>
+      <p class="mb-4 leading-relaxed text-sm">A few months ago, I joined <a href="https://clado.ai/" class="underline text-gray-900 transition-all duration-500 hover:text-gray-50 hover:bg-gray-700 px-0.5">Clado</a> as a software engineer. My internship has since ended, but I wanted to share a bit about some of my biggest contributions to clado's people search engine, which performs <a href="https://pbs.twimg.com/media/GwLWi2lWoAAGpOc?format=jpg&name=medium" class="underline text-gray-900 transition-all duration-500 hover:text-gray-50 hover:bg-gray-700 px-0.5">better than all competitors</a> on <a href="https://pearch.ai/" class="underline text-gray-900 transition-all duration-500 hover:text-gray-50 hover:bg-gray-700 px-0.5">pearch.ai's</a> sourcing <a href="https://arxiv.org/pdf/2504.02463" class="underline text-gray-900 transition-all duration-500 hover:text-gray-50 hover:bg-gray-700 px-0.5">benchmark</a>.</p>
+      
 
-      <p>As a primer: Our search is criteria based, and users can search through 100+ fields across 1B+ profiles in a single query. We achieve this at scale by decomposing the search problem into two parts:</p>
+      <p class="mb-4 leading-relaxed text-sm">As a primer: Our search is criteria based, and users can search through 100+ fields across 1B+ profiles in a single query. We achieve this at scale by decomposing the search problem into two parts:</p>
 
       <ol class="list-decimal pl-6 mb-4">
-        <li>generate a database query based on the user's input</li>
-        <li>filter returned profiles in parallel using large language models.</li>
+        <li class="mb-2">generate a database query based on the user's input</li>
+        <li class="mb-2">filter returned profiles in parallel using large language models.</li>
       </ol>
 
-      <h3>Creating a new Query Language</h3>
+      <h3 class="text-xl font-semibold mt-8 mb-4">Creating a new Query Language</h3>
 
-      <p>Around 1 week in, we decided to migrate our database from a MySQL to OpenSearch. We had already post-trained models on SQL generation, and so this meant we needed to retrain our models.</p>
+      <p class="mb-4 leading-relaxed text-sm">Around 1 week in, we decided to migrate our database from a MySQL to OpenSearch. We had already post-trained models on SQL generation, and so this meant we needed to retrain our models.</p>
 
-      <p>After a few evals, I found that most open models performed quite poorly with generating valid OpenSearch queries, primarily because of how much more verbose it was than SQL.</p>
+      <p class="mb-4 leading-relaxed text-sm">After a few evals, I found that most open models performed quite poorly with generating valid OpenSearch queries, primarily because of how much more verbose it was than SQL.</p>
 
-      <p>Here's an example SQL query for the search "Find me software engineers in SF":</p>
+      <p class="mb-4 leading-relaxed text-sm">Here's an example SQL query for the search "Find me software engineers in SF":</p>
 
-      <pre><code class="language-sql">SELECT *
+      <pre class="bg-gray-50 border border-gray-200 rounded-lg p-4 overflow-x-auto my-4"><code class="bg-transparent p-0 text-sm">SELECT *
 FROM people
 WHERE 
   (
@@ -100,9 +62,9 @@ WHERE
     OR past_company_title LIKE '%Software Engineer%'
   );</code></pre>
 
-      <p>And here is the OpenSearch equivalent:</p>
+      <p class="mb-4 leading-relaxed text-sm">And here is the OpenSearch equivalent:</p>
 
-      <pre><code class="language-json">{
+      <pre class="bg-gray-50 border border-gray-200 rounded-lg p-4 overflow-x-auto my-4"><code class="bg-transparent p-0 text-sm">{
   "query": {
     "bool": {
       "must": [
@@ -125,38 +87,38 @@ WHERE
   }
 }</code></pre>
 
-      <p>OpenSearch is much more verbose, around 4x more tokens on average.</p>
+      <p class="mb-4 leading-relaxed text-sm">OpenSearch is much more verbose, around 4x more tokens on average.</p>
 
-      <p>Instead of retraining on OpenSearch syntax, I created a custom language that was more concise and optimized for our use case - criteria based queries.</p>
+      <p class="mb-4 leading-relaxed text-sm">Instead of retraining on OpenSearch syntax, I created a custom language that was more concise and optimized for our use case - criteria based queries.</p>
 
-      <p>Some of the benefits of a custom language would be:</p>
+      <p class="mb-4 leading-relaxed text-sm">Some of the benefits of a custom language would be:</p>
       
-      <ul class="list-disc pl-6">
-        <li>Interoperability between different database backends</li>
-        <li>Maximally expressive for our specific use case</li>
-        <li>More concise than existing query languages</li>
-        <li>Allows for criteria-based searches with natural language patterns</li>
+      <ul class="list-disc pl-6 my-4">
+        <li class="mb-2">Interoperability between different database backends</li>
+        <li class="mb-2">Maximally expressive for our specific use case</li>
+        <li class="mb-2">More concise than existing query languages</li>
+        <li class="mb-2">Allows for criteria-based searches with natural language patterns</li>
       </ul>
 
-      <h3>Post-training Go Brrr</h3>
+      <h3 class="text-xl font-semibold mt-8 mb-4">Post-training Go Brrr</h3>
 
-      <p>The obvious downside of creating a custom query language is that the LLM has likely seen millions if not billions of examples of SQL in its training corpus, but zero examples of our custom language.</p>
+      <p class="mb-4 leading-relaxed text-sm">The obvious downside of creating a custom query language is that the LLM has likely seen millions if not billions of examples of SQL in its training corpus, but zero examples of our custom language.</p>
 
-      <p>My solution was to use reinforcement learning with a custom reward function. We used LLM-as-a-judge to evaluate query quality, but I designed a novel reward function to optimize for recall over precision:</p>
+      <p class="mb-4 leading-relaxed text-sm">My solution was to use reinforcement learning with a custom reward function. We used LLM-as-a-judge to evaluate query quality, but I designed a novel reward function to optimize for recall over precision:</p>
 
-      <pre><code class="language-latex">reward = tanh(quantity_score * quality_factor)</code></pre>
+      <pre class="bg-gray-50 border border-gray-200 rounded-lg p-4 overflow-x-auto my-4"><code class="bg-transparent p-0 text-sm">reward = tanh(quantity_score * quality_factor)</code></pre>
 
-      <p>This reward function helped prevent bias toward overly restrictive queries and encouraged the model to generate queries that would return more relevant results.</p>
+      <p class="mb-4 leading-relaxed text-sm">This reward function helped prevent bias toward overly restrictive queries and encouraged the model to generate queries that would return more relevant results.</p>
 
-      <p>However, we found that this approach worked much better than expected with small models during post-training. This was one of the most important realizations I had at Clado - you can use RL to teach small language models to do arbitrary tasks well, even when they have no prior exposure to the task.</p>
+      <p class="mb-4 leading-relaxed text-sm">However, we found that this approach worked much better than expected with small models during post-training. This was one of the most important realizations I had at Clado - you can use RL to teach small language models to do arbitrary tasks well, even when they have no prior exposure to the task.</p>
 
-      <p>The post-training run was successful, and we were able to hot-swap the model, which led to approximately 20x speed and cost improvement over our previous approach.</p>
+      <p class="mb-4 leading-relaxed text-sm">The post-training run was successful, and we were able to hot-swap the model, which led to approximately 20x speed and cost improvement over our previous approach.</p>
 
-      <h3>Reflection</h3>
+      <h3 class="text-xl font-semibold mt-8 mb-4">Reflection</h3>
 
-      <p>The key insight from this project is that you can use reinforcement learning to teach small language models to perform arbitrary tasks well, even tasks they've never seen before. This is particularly exciting because it opens up possibilities for highly specialized AI systems that can be trained quickly and cost-effectively.</p>
+      <p class="mb-4 leading-relaxed text-sm">The key insight from this project is that you can use reinforcement learning to teach small language models to perform arbitrary tasks well, even tasks they've never seen before. This is particularly exciting because it opens up possibilities for highly specialized AI systems that can be trained quickly and cost-effectively.</p>
 
-      <p>This approach of creating domain-specific languages and using RL to train models on them could be applied to many other domains where existing query languages are too verbose or not well-suited for the specific use case.</p>
+      <p class="mb-4 leading-relaxed text-sm">This approach of creating domain-specific languages and using RL to train models on them could be applied to many other domains where existing query languages are too verbose or not well-suited for the specific use case.</p>
 
     </article>
 
