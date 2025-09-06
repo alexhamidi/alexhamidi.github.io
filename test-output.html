@@ -40,7 +40,7 @@
     </div>
 
     <article class="blog-content text-sm">
-      <h1 class="text-3xl font-bold mb-6">creating a new query language</h1>
+      <h1 class="text-3xl font-bold mb-6">creating a new query language @ clado</h1>
 <h3 class="text-xl font-semibold mt-8 mb-4">Background</h3>
 <p class="mb-4 leading-relaxed">A few months ago, I joined <a href="https://clado.ai/" class="underline text-gray-900 transition-all duration-500 hover:text-gray-50 hover:bg-gray-700 px-0.5">Clado</a> as a software engineer. My internship has since ended, but I wanted to share a bit about one of my contributions to clado’s people search engine, which performs <a href="https://pbs.twimg.com/media/GwLWi2lWoAAGpOc?format=jpg&name=medium" class="underline text-gray-900 transition-all duration-500 hover:text-gray-50 hover:bg-gray-700 px-0.5">better than all competitors</a> on <a href="https://pearch.ai/" class="underline text-gray-900 transition-all duration-500 hover:text-gray-50 hover:bg-gray-700 px-0.5">pearch.ai’</a>s sourcing <a href="https://arxiv.org/pdf/2504.02463" class="underline text-gray-900 transition-all duration-500 hover:text-gray-50 hover:bg-gray-700 px-0.5">benchmark</a>.</p>
 <p class="mb-4 leading-relaxed">As a primer: Our search is criteria based, and users can search through 100+ fields across 1B+ profiles in a single query. We achieve this at scale by decomposing the search problem into two subproblems:</p>
@@ -123,7 +123,7 @@ Using this new language would mean cheaper and faster generation. We would also 
 <p class="mb-4 leading-relaxed">Fine-tuning is a method used to adapt LLMs to narrow tasks. The two most common types are:</p>
 <ul class="list-disc pl-6 mb-4 space-y-2"><li>Supervised Fine Tuning (SFT) - you provide valid input/output pairs, which the model learns from</li><li>Reinforcement Learning (RL) - you provide a function that scores the LLM’s outputs, which the model learns from</li></ul>
 <p class="mb-4 leading-relaxed">We tried to use SFT by running our task through a stronger model, Openai o3, and distilling those ouputs to Qwen-32b, with disappointing results:</p>
-<img src="../public/sft.png" alt="SFT Results" class="max-w-full h-auto my-6 rounded-lg border border-gray-200">
+<img src="public/sft.png" alt="SFT Results" class="max-w-full h-auto my-6 rounded-lg border border-gray-200">
 <p class="mb-4 leading-relaxed">SFT alone plateaued because the teacher model didn’t have a robust understanding of the task, and struggled to generate valid DSL that represented the user’s intent (despite how hard we tried to prompt it to).</p>
 <p class="mb-4 leading-relaxed">Luckily, we could use RL to directly optimize for the metrics we cared about - result quantity and quality. Given that RL will converge towards an optimal policy, the problem becomes defining a reward function. We landed on:</p>
 <div class=" my-6 bg-gray-50 p-4 border border-gray-200 rounded-lg text-center">$
@@ -162,7 +162,7 @@ $</div>
 <p class="mb-4 leading-relaxed">Our final fine tuned model achieved 0.93 on eval set relative to 0.45 when we started. Plus, the model output valid DSL 100% of the time, and it was 3x faster and 6x cheaper than OpenSearch.</p>
 <h3 class="text-xl font-semibold mt-8 mb-4">Reflection</h3>
 <p class="mb-4 leading-relaxed">I had a lot of fun with this, and plan to continue experimenting with fine tuning in different domains.</p>
-<p class="mb-4 leading-relaxed">My favorite result is that, as long as your reward function is aligned with your expectations there, is a decent chance your fine-tuned model will perform well.</p>
+<p class="mb-4 leading-relaxed">My favorite result is that you can fine tune LLMs on arbitrary tasks, and as long as your reward function is aligned with your expectations there is a decent chance it will end up performing well.</p>
 <p class="mb-4 leading-relaxed">And fine-tuning is now easier than ever - nothing here required more than 200 lines of code, and OpenAI even offers a <a href="https://platform.openai.com/finetune" class="underline text-gray-900 transition-all duration-500 hover:text-gray-50 hover:bg-gray-700 px-0.5">no-code platform</a> that makes it possible to fine tune their models.</p>
     </article>
 
