@@ -14,7 +14,7 @@
   <meta name="msapplication-TileColor" content="#da532c">
   <meta name="theme-color" content="#ffffff">
   <script src="https://cdn.tailwindcss.com"></script>
-  <title>Teaching GPT-5 to Use a Computer - Alex Hamidi</title>
+  <title>Building Umari - Alex Hamidi</title>
 </head>
 
 <body class="flex flex-col items-center text-gray-900 font-mono overflow-x-hidden bg-[#fcfcfa] color-[#121212]">
@@ -23,33 +23,33 @@
 
     <div class="flex items-center justify-between mt-8 mb-4">
       <a href="/" class="text-sm text-gray-600 hover:text-gray-900 underline">← back to home</a>
-      <div class="text-xs text-gray-500">August 2025</div>
+      <div class="text-xs text-gray-500">October 2025</div>
     </div>
 
     <article class="blog-content text-sm">
-      <h1 class="text-3xl font-bold mb-6">Teaching GPT-5 to Use a Computer</h1>
+      <h1 class="text-3xl font-bold mb-6">Building Umari</h1>
 
-      <p class="mb-4 leading-relaxed">Over the weekend, <a href="https://x.com/OpenAIDevs/status/1955774997735333936" target="_blank" rel="noopener noreferrer" class="underline text-gray-900 transition-all duration-500 hover:text-gray-50 hover:bg-gray-700 px-0.5">I won #3 at OpenAI's GPT-5 Hackathon</a> with Archon - a copilot for your computer. It comes with a mini vision model for speed, and GPT-5 for variable reasoning to plan. I took some time to write about how it works, and our approach to building a self-driving computer with inference math, and the tradeoffs we made.</p>
+      <p class="mb-4 leading-relaxed">I've been working on Umari, a web agent that lets you control your browser through natural language. The idea is simple: you type what you want done, and it figures out the clicks and keystrokes. But getting it to actually work fast enough to be useful turned into an interesting engineering problem.</p>
 
-      <p class="mb-4 leading-relaxed">Archon is a small bar that sits at the bottom of your Mac/Windows screen where you can type what you want your computer to do in natural language. It takes screenshots to see what's on screen, uses GPT-5's reasoning to plan, then a custom fine-tuned model executes clicks and keystrokes.</p>
+      <p class="mb-4 leading-relaxed">Umari runs as a lightweight interface where you describe tasks in plain English. It takes screenshots to see what's on screen, uses reasoning to plan the next steps, then executes them. The challenge was making this fast enough that it doesn't feel like you're waiting on the computer.</p>
 
-      <h3 class="text-xl font-semibold mt-8 mb-4">GPT-5: Why it worked for us</h3>
+      <h3 class="text-xl font-semibold mt-8 mb-4">Why GPT-5</h3>
 
-      <p class="mb-4 leading-relaxed"><strong>Archon was built entirely using GPT-5's advanced reasoning capabilities.</strong> We leveraged probably every aspect of GPT-5 from initial development to debugging to training. Codex CLI with GPT-5 with High Thinking enabled us to build the entire app, and GPT-5 with Vision enabled us to see and perceive the screen. GPT-5's reasoning ability was crucial for instruction following, and planning. This quite simply wasn't possible with any other model.</p>
+      <p class="mb-4 leading-relaxed"><strong>I built Umari entirely with GPT-5's reasoning capabilities.</strong> Used it for development, debugging, training data generation—basically everything. The high-compute reasoning mode helped plan multi-step interactions, and GPT-5 Vision handled screen understanding. Previous models couldn't reliably maintain context across long workflows.</p>
 
-      <p class="mb-4 leading-relaxed">What makes GPT-5 particularly suited for computer control is its ability to <em>reason through complex multi-step processes</em> while maintaining context across long interactions. Unlike previous models that might hallucinate or lose track of the current state, GPT-5's chain-of-thought reasoning allows it to break down "start playing this game" into discrete, executable steps while adapting to unexpected UI changes.</p>
+      <p class="mb-4 leading-relaxed">What makes GPT-5 work here is how it handles complex chains of actions without losing track. You can tell it "start playing this game" and it'll break that down into discrete steps while adapting when the UI changes unexpectedly. That context retention is crucial.</p>
 
-      <p class="mb-4 leading-relaxed"><strong>We calibrated how much compute to use strategically to trade off accuracy and latency.</strong> For complex workflows, high reasoning effort mapped out interaction sequences with error handling. GPT-5-mini with function calling preambles enabled us to show the user what we were thinking while simultaneously calling our grounding model. This adaptive approach keeps the user in mind.</p>
+      <p class="mb-4 leading-relaxed"><strong>I tuned compute allocation based on task complexity.</strong> Simple clicks get minimal reasoning, complex workflows get more. For ambiguous UIs, high reasoning effort maps out interaction sequences with error handling. This tradeoff between speed and reliability makes the difference between something that works and something people actually use.</p>
 
-      <h3 class="text-xl font-semibold mt-8 mb-4">How it actually works</h3>
+      <h3 class="text-xl font-semibold mt-8 mb-4">Architecture</h3>
 
-      <p class="mb-4 leading-relaxed"><strong>Archon uses a hierarchical approach: a large reasoning model (GPT-5/o-series) decides what to do, and prava-fc-small (Prava's Fast Click grounding model) figures out exactly where to click.</strong> This split matters because reasoning and grounding are fundamentally different problems with different computational requirements.</p>
+      <p class="mb-4 leading-relaxed"><strong>The system uses two models: GPT-5 for reasoning about what to do, and a small grounding model for finding exactly where to click.</strong> This split makes sense because deciding what action to take is fundamentally different from executing it precisely.</p>
 
-      <p class="mb-4 leading-relaxed">The reasoning model sees the screen and your request, then outputs a semantic action: "click the blue Submit button at the bottom." Descriptions enable reasoning to be done in natural language. <strong>prava-fc-small</strong> takes that description plus the screenshot and outputs exact pixel coordinates: (523, 412). One model for the "what," another for the "where."</p>
+      <p class="mb-4 leading-relaxed">GPT-5 sees the screen and outputs a semantic action like "click the blue Submit button." Then the grounding model takes that description, looks at the screenshot, and outputs exact pixel coordinates. One handles the "what," the other handles the "where."</p>
 
-      <h3 class="text-xl font-semibold mt-8 mb-4">Why vision tokens are expensive (and how we optimize them)</h3>
+      <h3 class="text-xl font-semibold mt-8 mb-4">Why vision tokens are expensive</h3>
 
-      <p class="mb-4 leading-relaxed">For GPT-5's computer-using agent, each action involves vision, reasoning, and response. A 1920×1080 screenshot becomes 6 tiles at 170 tokens each, plus reasoning tokens billed as output.</p>
+      <p class="mb-4 leading-relaxed">Vision models process screenshots as tiles. A 1920×1080 screen becomes 6 tiles at 170 tokens each, plus reasoning tokens.</p>
 
       <div class="bg-gray-50 border border-gray-200 rounded-lg p-4 my-4 text-sm">
         <div class="mb-2"><span class="text-gray-600">Per step:</span> <strong>3,200–9,400 tokens</strong></div>
@@ -58,31 +58,31 @@
         <div class="pt-2 border-t border-gray-300 mt-2"><span class="text-gray-600">Latency:</span> <strong>2–5 seconds per action</strong> <span class="text-xs text-gray-500">(100-step task = 3–8 minutes)</span></div>
       </div>
 
-      <p class="mb-4 leading-relaxed">Running the same workflow 100 times daily costs $940, over $28,000/month without caching. Each run takes 3–8 minutes, so what would take a human 50 minutes would take 5–13 hours of compute time.</p>
+      <p class="mb-4 leading-relaxed">Running workflows at scale gets expensive fast. Without optimization, costs compound quickly—$28k/month for repeated tasks. And latency adds up: what takes a human 50 minutes could take 5–13 hours in compute time.</p>
 
-      <p class="mb-4 leading-relaxed">Our approach: split reasoning from grounding. GPT-5 decides "click the blue Submit button," prava-fc-small finds the exact coordinates. We cache patches aggressively since UI elements rarely move between actions, so the Submit button at (834, 672) stays cached across clicks. Combined with a 3MB saliency scorer that identifies interactive regions, we achieve 70%+ cache hits and 10–50ms grounding latency.</p>
+      <p class="mb-4 leading-relaxed">My approach: split reasoning from grounding, then cache aggressively. UI elements don't move much between actions, so a Submit button at (834, 672) stays cached. Combined with a lightweight saliency scorer that identifies interactive regions, this gets 70%+ cache hits and 10–50ms grounding latency.</p>
 
-      <h3 class="text-xl font-semibold mt-8 mb-4">Training: GRPO and synthetic data generation</h3>
+      <h3 class="text-xl font-semibold mt-8 mb-4">Training</h3>
 
-      <p class="mb-4 leading-relaxed"><strong>We trained prava-fc-small with GRPO (Group Relative Policy Optimization), where rewards are binary: 1 if the click lands inside the target UI element, 0 otherwise.</strong> Patches work well for this because they're small enough that clicking anywhere within a patch-covered element still gets rewarded.</p>
+      <p class="mb-4 leading-relaxed"><strong>I trained the grounding model with GRPO (Group Relative Policy Optimization). Rewards are binary: 1 if the click hits the target element, 0 otherwise.</strong> This works well with patches—small enough that any click within the element gets rewarded.</p>
 
-      <p class="mb-4 leading-relaxed">To scale training data, we used trajectory augmentation on human demonstrations. From one recorded workflow, we generate multiple related trajectories by varying timing, UI states, and interaction patterns - effectively "boosting" the grounding model's robustness across different scenarios.</p>
+      <p class="mb-4 leading-relaxed">For training data, I used trajectory augmentation on recorded workflows. One demonstration becomes multiple trajectories by varying timing and UI states. This makes the model more robust across different scenarios without needing tons of manual labeling.</p>
 
-      <h3 class="text-xl font-semibold mt-8 mb-4">Speed: adaptive compute that feels instant</h3>
+      <h3 class="text-xl font-semibold mt-8 mb-4">Making it fast</h3>
 
-      <p class="mb-4 leading-relaxed">Test-time compute is getting extremely hyped these days, particularly off of the success of the o-series models. Good thing for prava-fc-small is that it's a lot of "grounding work" and not a lot of "knowledge work". You can get a lot of mileage out of a 7B model if you instead vary the reasoning and determine how to properly pipeline the tasks.</p>
+      <p class="mb-4 leading-relaxed">Test-time compute gets a lot of hype, but for web agents the bottleneck is usually grounding, not reasoning. A 7B model can handle most click targeting if you route properly.</p>
 
-      <p class="mb-4 leading-relaxed">On this path, <strong>prava-fc-small</strong> runs alone (no planner call), hitting ~50 ms per action on a A100. The router only escalates when signals are uncertain: high saliency entropy, too many candidate targets, recent misclicks, or ambiguous copy (e.g., multiple "Submit" buttons).</p>
+      <p class="mb-4 leading-relaxed">For simple UIs, the grounding model runs alone—no planner call needed. This hits ~50ms per action on an A100. I only escalate to the reasoning model when there's ambiguity: high saliency entropy, multiple similar targets, recent errors, or duplicate UI elements.</p>
 
-      <p class="mb-4 leading-relaxed">The fundamental tradeoff is simple: consumers want one thing done fast, enterprises want many things done efficiently. Same model, different routing strategy.</p>
+      <p class="mb-4 leading-relaxed">The tradeoff is straightforward: speed for simple tasks, accuracy for complex ones. Same models, different routing based on confidence.</p>
 
-      <h3 class="text-xl font-semibold mt-8 mb-4">What's next: streaming control and unifying the stack</h3>
+      <h3 class="text-xl font-semibold mt-8 mb-4">What's next</h3>
 
-      <p class="mb-4 leading-relaxed">In the future we hope to run a streaming capture pipeline similar to Gemma 3. Consuming frames at 20-30 fps, emitting actions at 5-10 Hz, and verifying state on each commit. This closes the perception-action loop for drag/hover/scroll and makes motion feel natural.</p>
+      <p class="mb-4 leading-relaxed">I'm working on moving to a streaming pipeline—consuming frames at 20-30 fps, emitting actions at 5-10 Hz. This would close the perception-action loop properly and handle drag/hover/scroll more naturally.</p>
 
-      <p class="mb-4 leading-relaxed">We also plan to <em>compile</em> solved steps into micro-policies. If you're running something like a RPA task or similar workflow as before, you can simply run the execution locally (with prava-fc-small running locally) and not have to worry about the planning. Over time, the planner is a background teacher, not a crutch.</p>
+      <p class="mb-4 leading-relaxed">Also planning to compile repeated workflows into micro-policies. If you're running the same RPA task daily, the model should learn it and execute locally without calling the planner. The reasoning model becomes a teacher, not a dependency.</p>
 
-      <p class="mb-4 leading-relaxed">We will distill those plans into the local model so more steps stay on the fast path. The path forward is to adopt an end-to-end approach to the problem. For Tesla that's camera, steering, acceleration. For us it's screen, mouse, keyboard.</p>
+      <p class="mb-4 leading-relaxed">Long term, the goal is end-to-end. Tesla went from rules-based driving to cameras→steering directly. Same principle here: screenshots→actions, minimal intermediate abstractions.</p>
 
       <h3 class="text-xl font-semibold mt-8 mb-4">Related Work</h3>
 
