@@ -15,6 +15,17 @@ type ConnectionState = {
 export default class CursorServer implements Party.Server {
   constructor(readonly room: Party.Room) {}
 
+  static async onBeforeRequest(req: Party.Request) {
+    return new Response(null, {
+      status: 200,
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+        "Access-Control-Allow-Headers": "Content-Type",
+      },
+    });
+  }
+
   onConnect(conn: Party.Connection) {
     const colors = [
       "#FF6B6B", "#4ECDC4", "#45B7D1", "#FFA07A", 
@@ -36,14 +47,3 @@ export default class CursorServer implements Party.Server {
     );
   }
 }
-
-CursorServer.onBeforeRequest = async (req) => {
-  return new Response(null, {
-    status: 200,
-    headers: {
-      "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-      "Access-Control-Allow-Headers": "Content-Type",
-    },
-  });
-};
