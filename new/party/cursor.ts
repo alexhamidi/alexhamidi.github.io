@@ -8,6 +8,10 @@ type CursorMessage = {
   color: string;
 };
 
+type ConnectionState = {
+  color: string;
+};
+
 export default class CursorServer implements Party.Server {
   constructor(readonly room: Party.Room) {}
 
@@ -24,7 +28,7 @@ export default class CursorServer implements Party.Server {
 
   onMessage(message: string, sender: Party.Connection) {
     const data = JSON.parse(message) as CursorMessage;
-    const color = sender.state?.color as string;
+    const color = (sender.state as ConnectionState)?.color as string;
     
     this.room.broadcast(
       JSON.stringify({ ...data, userId: sender.id, color }),
