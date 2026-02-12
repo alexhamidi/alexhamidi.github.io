@@ -59,7 +59,7 @@ export default function RootLayout({
             left: 0,
             width: '100%',
             height: '100%',
-            backgroundColor: 'rgb(255, 255, 255)',
+            backgroundColor: 'rgb(255, 255, 255, .1)',
             zIndex: -1
           }}
         />

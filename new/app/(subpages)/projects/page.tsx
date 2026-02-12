@@ -28,7 +28,7 @@ export default function Projects() {
 
   return (
     <article>
-      <div className="flex flex-col gap-8">
+      {/* <div className="flex flex-col gap-8">
         {projects.map((project) => (
           <a
             key={project.title}
@@ -46,7 +46,7 @@ export default function Projects() {
             </p>
           </a>
         ))}
-      </div>
+      </div> */}
     </article>
   );
 }

@@ -73,6 +73,7 @@ export default function Sidebar({ booksData }: { booksData?: Array<{ slug: strin
     { href: "https://twitter.com/ahamidi_", label: "Twitter" },
     { href: "https://github.com/alexhamidi/", label: "GitHub" },
     { href: "https://www.linkedin.com/in/alexander-hamidi-208736254/", label: "LinkedIn" },
+    { href: "https://www.linkedin.com/in/alexander-hamidi-208736254/", label: "Notes" },
   ];
 
   return (
@@ -80,7 +81,7 @@ export default function Sidebar({ booksData }: { booksData?: Array<{ slug: strin
       {/* Desktop Sidebar */}
       <aside className="hidden md:block fixed left-0 top-0 h-screen pt-12 pl-20 z-10 overflow-y-auto">
         <div className="flex flex-col gap-12">
-          {/* <div className="flex flex-col">
+          <div className="flex flex-col">
             <nav className="flex flex-col gap-1">
               {navigationLinks.map((link) => (
                 <div key={link.href} className="flex flex-col">
@@ -119,7 +120,7 @@ export default function Sidebar({ booksData }: { booksData?: Array<{ slug: strin
                           : '0px',
                       }}
                     >
-                      <div className="flex flex-col gap-0.5 pt-1 pb-1">
+                      <div className="flex flex-col gap-0.5 pb-1">
                         {link.subitems.map((subitem, index) => (
                           <Link
                             key={subitem.href}
@@ -151,7 +152,7 @@ export default function Sidebar({ booksData }: { booksData?: Array<{ slug: strin
                 </div>
               ))}
             </nav>
-          </div> */}
+          </div>
 
           <div className="flex flex-col">
             {/* <div className="text-xs font-bold tracking-wider mb-4 text-gray-500 uppercase pl-5.5">

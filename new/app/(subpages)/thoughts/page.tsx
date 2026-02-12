@@ -10,7 +10,7 @@ export default function Thoughts() {
 
   return (
     <article>
-      <div className="flex flex-col gap-8">
+      {/* <div className="flex flex-col gap-8">
         {thoughts.map((thought) => (
           <a
             key={thought.title}
@@ -28,7 +28,7 @@ export default function Thoughts() {
             </p>
           </a>
         ))}
-      </div>
+      </div> */}
     </article>
   );
 }
