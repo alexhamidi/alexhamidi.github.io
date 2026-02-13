@@ -1,10 +1,8 @@
 import type { Metadata } from "next";
 import { JetBrains_Mono, Lora } from "next/font/google";
 import "./globals.css";
-import Sidebar from "./components/Sidebar";
 import AudioPlayer from "./components/AudioPlayer";
 import CursorSync from "./components/CursorSync";
-import { getAllBooks } from "./(subpages)/books/utils";
 
 const mono = JetBrains_Mono({
   variable: "--font-mono",
@@ -30,15 +28,10 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const books = getAllBooks().map(book => ({
-    slug: book.slug,
-    title: book.title
-  }));
-
   return (
     <html lang="en">
       <body className={`${mono.variable} ${lora.variable} antialiased`}>
-        <div 
+        <div
           style={{
             position: 'fixed',
             top: 0,
@@ -52,7 +45,7 @@ export default function RootLayout({
             zIndex: -2
           }}
         />
-        <div 
+        <div
           style={{
             position: 'fixed',
             top: 0,
@@ -64,11 +57,8 @@ export default function RootLayout({
           }}
         />
         <CursorSync />
-        <Sidebar booksData={books} />
-        <main className="min-h-screen pt-15 flex justify-center items-start">
-          <div className="w-full max-w-[40vw]">
-            {children}
-          </div>
+        <main className="min-h-screen">
+          {children}
         </main>
         <AudioPlayer />
       </body>

@@ -6,38 +6,57 @@
   }
 
   body {
-    @apply bg-white text-black leading-relaxed;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+    @apply text-neutral-900 leading-relaxed;
+    background-color: #ffffff;
+    font-family: var(--font-serif), Georgia, serif;
     font-size: 16px;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
 
   a {
-    @apply text-blue-600 underline transition-colors duration-200;
+    @apply text-neutral-900 no-underline transition-colors duration-200;
   }
 
   a:hover {
-    @apply text-blue-800;
+    @apply text-black;
   }
 
   strong {
     @apply font-semibold;
   }
 
-  h1 {
-    @apply font-bold leading-tight;
-  }
-
-  ul {
-    @apply leading-relaxed;
-  }
-
-  li {
-    @apply leading-relaxed;
+  h1, h2, h3 {
+    @apply font-bold leading-tight tracking-tight;
   }
 }
 
+/* Dotted leader lines */
+.nav-leader-item {
+  display: flex;
+  align-items: baseline;
+  line-height: 1.8;
+}
+
+.nav-leader-label {
+  flex-shrink: 0;
+}
+
+.nav-leader-dots {
+  flex: 1;
+  border-bottom: 1px dotted currentColor;
+  opacity: 0.3;
+  margin: 0 6px;
+  position: relative;
+  top: -3px;
+}
+
+.nav-leader-year {
+  flex-shrink: 0;
+  opacity: 0.6;
+}
+
+/* Animations */
 @keyframes slideUp {
   from {
     opacity: 0;
@@ -49,22 +68,7 @@
   }
 }
 
-@keyframes expandSmooth {
-  0% {
-    transform: scaleY(.3);
-    transform-origin: top;
-    opacity: 0;
-  }
-  100% {
-    transform: scaleY(1);
-    opacity: 1;
-  }
-}
-
-.sidebar-expand {
-  animation: expandSmooth 0.2s ease-out;
-}
-
+/* Audio player */
 .audio-progress-bar {
   @apply w-full h-[3px] appearance-none outline-none rounded-[1.5px] cursor-pointer mb-2;
 }
