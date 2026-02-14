@@ -103,7 +103,7 @@ function TrackCard({ item }: { item: MusicItem }) {
 
   return (
     <div
-      className="relative overflow-hidden group cursor-pointer aspect-[6/3] rounded-md" // Removed rounded-lg and transform classes
+      className="relative overflow-hidden group cursor-pointer aspect-[6/3] " // Removed rounded-lg and transform classes
       onClick={toggle}
     >
       {/* Background Image */}
@@ -119,7 +119,6 @@ function TrackCard({ item }: { item: MusicItem }) {
       )}
 
       {/* Dark Overlay - Appears only on hover */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200 ease-in-out" />
 
       {/* Content Container - Appears only on hover */}
       <div className="relative z-10 flex flex-col justify-between h-full p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-200 ease-in-out">
@@ -128,7 +127,7 @@ function TrackCard({ item }: { item: MusicItem }) {
 
         {/* Bottom Info (Title, Numbers, Bar) */}
         <div className="w-full">
-          <div className="flex items-end justify-between mb-2">
+          <div className="flex items-end justify-between ">
             <h3 className="text-white text-[15px] font-medium tracking-wide shadow-sm select-none truncate pr-2">
               {item.title}
             </h3>

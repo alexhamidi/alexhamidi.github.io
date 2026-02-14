@@ -31,7 +31,7 @@ const projects: NavItem[] = [
 export default function SectionNav({ books }: SectionNavProps) {
   const [activeSection, setActiveSection] = useState<string>("start");
   const isClickScrolling = useRef(false);
-  const clickTimeout = useRef<NodeJS.Timeout>(undefined);
+  const clickTimeout = useRef<NodeJS.Timeout | undefined>(undefined);
 
   const bookItems: NavItem[] = books.map((b) => ({
     label: b.title.length > 20 ? b.title.slice(0, 18) + "\u2026" : b.title,
@@ -42,11 +42,11 @@ export default function SectionNav({ books }: SectionNavProps) {
   const sections: NavSection[] = [
     { title: "Home", sectionId: "start" },
     { title: "Work", sectionId: "work" },
-    { title: "Projects", sectionId: "projects", items: projects },
+    { title: "Projects", sectionId: "projects" }, // items: projects },
     { title: "Writing", sectionId: "writing" },
     { title: "Music", sectionId: "music" },
     { title: "Gallery", sectionId: "gallery" },
-    { title: "Reading", sectionId: "reading", items: bookItems },
+    { title: "Reading", sectionId: "reading" }, // items: bookItems },
     { title: "Wall", sectionId: "wall" },
   ];
 
@@ -65,10 +65,13 @@ export default function SectionNav({ books }: SectionNavProps) {
     }, 800);
   }, []);
 
-  const handleItemClick = useCallback((sectionId: string, title: string) => {
-    handleClick(sectionId);
-    window.dispatchEvent(new CustomEvent("open-modal", { detail: title }));
-  }, [handleClick]);
+  const handleItemClick = useCallback(
+    (sectionId: string, title: string) => {
+      handleClick(sectionId);
+      window.dispatchEvent(new CustomEvent("open-modal", { detail: title }));
+    },
+    [handleClick],
+  );
 
   useEffect(() => {
     const sectionIds = sections.map((s) => s.sectionId);
@@ -118,14 +121,14 @@ export default function SectionNav({ books }: SectionNavProps) {
   ];
 
   return (
-    <nav className="flex flex-col sticky top-16 w-52 flex-shrink-0 gap-5 pb-8">
+    <nav className="flex flex-col sticky top-16 w-52 flex-shrink-0  pb-8 -mt-3">
       {sections.map((section) => {
         const isActive = activeSection === section.sectionId;
         return (
           <div key={section.sectionId}>
             <button
               onClick={() => handleClick(section.sectionId)}
-              className={`cursor-pointer bg-transparent border-0 p-0 text-left transition-all duration-200 ${
+              className={`cursor-pointer  p-3 border-0  tracking-wide text-left transition-all duration-200 w-full ${ // Added w-full here
                 isActive ? "opacity-100" : "opacity-40 hover:opacity-70"
               }`}
             >
@@ -145,7 +148,9 @@ export default function SectionNav({ books }: SectionNavProps) {
                 {section.items.map((item, i) => (
                   <button
                     key={`${item.label}-${i}`}
-                    onClick={() => handleItemClick(section.sectionId, item.fullTitle || item.label)}
+                    onClick={() =>
+                      handleItemClick(section.sectionId, item.fullTitle || item.label)
+                    }
                     className="nav-leader-item text-neutral-400 bg-transparent border-0 p-0 text-left cursor-pointer hover:text-neutral-600 transition-colors duration-150"
                   >
                     <span className="nav-leader-label text-[12px]">
@@ -154,7 +159,7 @@ export default function SectionNav({ books }: SectionNavProps) {
                     {item.year && (
                       <>
                         <span className="nav-leader-dots" />
-                        <span className="nav-leader-year text-[12px]  ">
+                        <span className="nav-leader-year text-[12px]">
                           {item.year}
                         </span>
                       </>
@@ -167,14 +172,14 @@ export default function SectionNav({ books }: SectionNavProps) {
         );
       })}
 
-      <div className="mt-auto pt-16 flex flex-col gap-5">
+      <div className="mt-auto pt-16 flex flex-col ">
         {socialLinks.map((link) => (
           <a
             key={link.label}
             href={link.href}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-[13px] tracking-wide uppercase no-underline text-neutral-600 font-medium opacity-40 hover:opacity-70 transition-all duration-200 flex items-center gap-1.5"
+            className="text-[13px]  p-3  tracking-wide uppercase no-underline text-neutral-600 font-medium opacity-40 hover:opacity-70 transition-all duration-200 flex items-center gap-1.5"
           >
             {link.label}
             <svg

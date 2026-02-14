@@ -1,7 +1,7 @@
 "use client";
 
+import Image from "next/image";
 import ZoomGrid from "./ZoomGrid";
-import TrimmedImg from "./TrimmedImg";
 
 export default function PhotoGrid({
   urls,
@@ -19,13 +19,21 @@ export default function PhotoGrid({
       renderCard={(url) => {
         const src = prefix ? `${prefix}${url}` : url;
         const isMj = src.startsWith("https://cdn.midjourney.com/");
+
         return isMj ? (
-          <TrimmedImg src={src} className="w-full rounded-lg" loading="lazy" />
+          <Image
+            src={src}
+            alt=""
+            width={800}
+            height={800}
+            className="w-full rounded-lg"
+            loading="lazy"
+          />
         ) : (
           <img
             src={src}
             alt=""
-            className="w-full rounded-lg"
+            className="w-full "
             loading="lazy"
             decoding="async"
           />
