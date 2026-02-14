@@ -154,7 +154,7 @@ export default function SectionNav({ books }: SectionNavProps) {
                     {item.year && (
                       <>
                         <span className="nav-leader-dots" />
-                        <span className="nav-leader-year text-[12px] font-mono">
+                        <span className="nav-leader-year text-[12px]  ">
                           {item.year}
                         </span>
                       </>

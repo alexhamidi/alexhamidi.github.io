@@ -184,23 +184,6 @@ export default function ZoomGrid<T>({
                 transition: "opacity 100ms cubic-bezier(0.33, 0, 0.2, 1)",
               }}
             >
-              <button
-                onClick={handleClose}
-                className="absolute top-3 right-3 w-7 h-7 flex items-center justify-center rounded-full hover:bg-neutral-100 transition-colors text-neutral-400 hover:text-black cursor-pointer z-10"
-              >
-                <svg
-                  width="12"
-                  height="12"
-                  viewBox="0 0 14 14"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                >
-                  <path d="M1 1l12 12M13 1L1 13" />
-                </svg>
-              </button>
-
               {renderExpanded(items[modal.index], modal.index)}
             </div>
           </div>

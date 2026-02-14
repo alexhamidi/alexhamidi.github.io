@@ -18,7 +18,7 @@ export default function ContactForm() {
         e.preventDefault();
         handleSend();
       }}
-      className="relative flex items-end"
+      className="relative flex items-center"
     >
       <textarea
         value={message}
@@ -36,7 +36,7 @@ export default function ContactForm() {
       <button
         type="submit"
         disabled={!message.trim()}
-        className="absolute right-2 bottom-1.5 text-sm px-2 py-0.5 text-neutral-600 disabled:opacity-30 transition-colors duration-200 cursor-pointer"
+        className="absolute right-0 px-2  text-sm px-3 h-full text-neutral-600 disabled:opacity-30 transition-colors duration-200 cursor-pointer"
       >
         send
       </button>

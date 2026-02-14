@@ -3,7 +3,7 @@ import { JetBrains_Mono, Lora } from "next/font/google";
 import "./globals.css";
 
 const mono = JetBrains_Mono({
-  variable: "--font-mono",
+  variable: "-- ",
   subsets: ["latin"],
 });
 

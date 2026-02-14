@@ -1,13 +1,16 @@
 import SectionNav from "./components/SectionNav";
 import SectionHeader from "./components/SectionHeader";
-import ProjectModal from "./components/ProjectModal";
+import ProjectSection from "./components/ProjectSection";
+import MusicSection from "./components/MusicSection";
 import BookGrid, { type Book3D } from "./components/BookGrid";
 import PhotoGrid from "./components/PhotoGrid";
-import QuoteGrid from "./components/QuoteGrid";
-import MusicCard from "./components/MusicCard";
 import ContactForm from "./components/ContactForm";
 import PostItWall from "./components/PostItWall";
 import ScrollRestore from "./components/ScrollRestore";
+import { getData } from "./utils/getData";
+import { ProjectItem, MusicItem } from "./utils/interfaces"
+
+
 import fs from "fs";
 import path from "path";
 
@@ -20,10 +23,16 @@ function getMjImageItems() {
     path.join(process.cwd(), "public/midjourney/data.json"),
     "utf-8",
   );
+  const blacklist = new Set(
+    fs.readFileSync(path.join(process.cwd(), "public/midjourney/blacklist.txt"), "utf-8")
+      .split("\n").map(l => l.trim()).filter(Boolean),
+  );
   const mjData = JSON.parse(raw);
   return mjData.data.filter(
-    (item: { event_type: string }) =>
-      item.event_type === "diffusion" || item.event_type === "variation",
+    (item: { id: string; event_type: string; rating?: Record<string, number> }) =>
+      (item.event_type === "diffusion" || item.event_type === "variation") &&
+      !(item.rating && item.rating["0"] === 1 && item.rating["1"] === 1 && item.rating["2"] === 1 && item.rating["3"] === 1) &&
+      !blacklist.has(item.id),
   );
 }
 
@@ -32,7 +41,7 @@ function getRandomMjUrls(count: number): string[] {
   const shuffled = items.sort(() => Math.random() - 0.5);
   return shuffled.slice(0, count).map((item: { id: string }) => {
     const variant = Math.floor(Math.random() * 4);
-    return `https://cdn.midjourney.com/${item.id}/0_${variant}.png`;
+    return `https://cdn.midjourney.com/${item.id}/0_${variant}.webp`;
   });
 }
 
@@ -91,55 +100,7 @@ const projects = [
   },
 ];
 
-const work = [
-  {
-    title: "Palantir",
-    description:
-      "Incoming Production Engineer. I am ideologically aligned with the work I expect to do here. ",
-    date: "2026",
-    link: "https://github.com/alexhamidi",
-    tags: ["TypeScript", "Search"],
-    badge: "/badges/pltr.png",
-  },
-  {
-    title: "Conway AI",
-    description:
-      "An AI-powered exploration of Conway's Game of Life. Uses neural networks to discover and classify emergent patterns, letting you search for structures by behavior rather than shape.",
-    date: "2025",
-    link: "https://github.com/alexhamidi",
-    tags: ["Python", "AI"],
-    badge: "/badges/conway.png",
-  },
-  {
-    title: "Clado",
-    description:
-      "A new query language designed specifically for people search. Write expressive filters across professional networks, social graphs, and public records in a natural syntax.",
-    date: "2025",
-    link: "https://github.com/alexhamidi",
-    tags: ["TypeScript", "Search"],
-    badge: "/badges/clado.png",
-  },
-  {
-    title: "AWS Automation",
-    description:
-      "A collection of automation scripts for AWS infrastructure. Handles provisioning, scaling, monitoring, and teardown of cloud resources with minimal configuration.",
-    date: "2025",
-    link: "https://github.com/alexhamidi",
-    tags: ["Python", "Infra"],
-    badge: "/badges/aws.png",
-  },
-  {
-    title: "APSS",
-    description:
-      "Agentic Program Search System — a framework for composing LLM systems by searching over program spaces. Combines code generation with evaluation to find optimal agent architectures.",
-    date: "2025",
-    link: "https://github.com/alexhamidi/APSS",
-    tags: ["Python", "AI"],
-    badge: "/badges/sd.png",
-  },
-
-
-];
+// Work items loaded from data/work/*.mdx (resolved in async Home component)
 
 const books: Book3D[] = [
   {
@@ -274,48 +235,11 @@ const photos = [
   "3898072146119326550_2.jpg",
 ].map((url) => `/photos/${url}`);
 
-const quotes = [
-  {
-    text: "I can stand brute force, but something about brute reason is quite unbearable. It is hitting below the intellect.",
-    author: "Oscar Wilde",
-  },
-  {
-    text: "The only way to do great work is to love what you do.",
-    author: "Steve Jobs",
-  },
-  {
-    text: "We are what we repeatedly do. Excellence, then, is not an act, but a habit.",
-    author: "Aristotle",
-  },
-  {
-    text: "It is not the critic who counts; not the man who points out how the strong man stumbles. The credit belongs to the man who is actually in the arena.",
-    author: "Theodore Roosevelt",
-  },
-  {
-    text: "The best time to plant a tree was 20 years ago. The second best time is now.",
-    author: "Chinese Proverb",
-  },
-  {
-    text: "Show me the incentive and I will show you the outcome.",
-    author: "Charlie Munger",
-  },
-  {
-    text: "The most contrarian thing of all is not to oppose the crowd but to think for yourself.",
-    author: "Peter Thiel",
-  },
-  {
-    text: "Simplicity is the ultimate sophistication.",
-    author: "Leonardo da Vinci",
-  },
-  {
-    text: "Wind extinguishes a candle and energizes fire. Likewise with randomness, uncertainty, chaos: you want to use them, not hide from them.",
-    author: "Nassim Taleb",
-  },
-];
 
-export default function Home() {
+export default async function Home() {
+  const work = await getData<ProjectItem>("work");
+  const music = await getData<MusicItem>("music");
   const mjUrls = getMjGalleryUrls();
-  const musicBgs = getRandomMjUrls(3);
 
   return (
     <div className="w-full">
@@ -365,9 +289,9 @@ export default function Home() {
           - invite discourse 
           */}
         </p>
-        <p className="mt-5 text-base text-neutral-500 leading-relaxed">
+        {/* <p className="mt-5 text-base text-neutral-500 leading-relaxed">
           I did IPHo and ICPC (regional winner)
-        </p>
+        </p> */}
 
 
       </section>
@@ -383,33 +307,28 @@ export default function Home() {
         <div className="pb-24">
           <section id="work" className="scroll-mt-8 mb-16 mt-10">
             <SectionHeader title="work" />
-            <ProjectModal projects={work} showDates fullWidth />
+            <ProjectSection projects={work} showDates fullWidth />
           </section>
 
           <section id="projects" className="scroll-mt-8 mb-16 mt-10">
             <SectionHeader title="projects" />
-            <ProjectModal projects={projects} />
+            <ProjectSection projects={projects} />
           </section>
 
           <section id="writing" className="scroll-mt-8 mb-16 mt-10">
             <SectionHeader title="writing" />
-            <ProjectModal projects={thoughts.map(t => ({ title: t.title, description: t.excerpt, date: t.date, link: "", tags: [] }))} />
+            <ProjectSection projects={thoughts.map(t => ({ title: t.title, description: t.excerpt, date: t.date, link: "", tags: [] }))} />
           </section>
 
           <section id="music" className="scroll-mt-8 mb-16 mt-10">
             <SectionHeader title="music" />
-            <MusicCard
-              tracks={[
-                { src: "/music/new.mp3", title: "New", bg: musicBgs[0] },
-                { src: "/music/what.wav", title: "What", bg: musicBgs[1] },
-                { src: "/music/who.wav", title: "Who", bg: musicBgs[2] },
-              ]}
-            />
+            <MusicSection music={music} />
           </section>
 
           <section id="gallery" className="scroll-mt-8 mb-16 mt-10">
             <SectionHeader title="gallery" />
-            <PhotoGrid urls={photos} />
+            {/* <PhotoGrid urls={photos} /> */}
+            <PhotoGrid urls={[...photos]} />
           </section>
 
           <section id="reading" className="scroll-mt-8 mb-16 mt-10">

@@ -326,7 +326,7 @@ export default function BookGrid({ books }: { books: Book3D[] }) {
                   {books[modal.index].title}
                 </h2>
                 {books[modal.index].date && (
-                  <span className="text-[11px] font-mono text-neutral-300">
+                  <span className="text-[11px]   text-neutral-300">
                     {books[modal.index].date}
                   </span>
                 )}

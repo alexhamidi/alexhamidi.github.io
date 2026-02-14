@@ -1,23 +1,16 @@
 "use client";
 
 import { useState, useRef, useCallback, useEffect } from "react";
-
-type Project = {
-  title: string;
-  description: string;
-  date: string;
-  link: string;
-  tags: string[];
-  badge?: string;
-};
+import { MDXRemote, type MDXRemoteSerializeResult } from "next-mdx-remote";
+import { ProjectItem } from "../utils/interfaces"
 
 type ModalState =
   | { phase: "closed" }
-  | { phase: "expanding"; project: Project; startRect: DOMRect }
-  | { phase: "open"; project: Project; startRect: DOMRect }
-  | { phase: "closing"; project: Project; startRect: DOMRect };
+  | { phase: "expanding"; project: ProjectItem; startRect: DOMRect }
+  | { phase: "open"; project: ProjectItem; startRect: DOMRect }
+  | { phase: "closing"; project: ProjectItem; startRect: DOMRect };
 
-export default function ProjectModal({ projects, showDates = false, fullWidth = false }: { projects: Project[]; showDates?: boolean; fullWidth?: boolean }) {
+export default function ProjectSection({ projects, showDates = false, fullWidth = false }: { projects: ProjectItem[]; showDates?: boolean; fullWidth?: boolean }) {
   const [modal, setModal] = useState<ModalState>({ phase: "closed" });
   const cardRefs = useRef<Map<string, HTMLButtonElement>>(new Map());
   const modalRef = useRef<HTMLDivElement>(null);
@@ -35,7 +28,7 @@ export default function ProjectModal({ projects, showDates = false, fullWidth = 
     };
   }, []);
 
-  const handleOpen = useCallback((project: Project) => {
+  const handleOpen = useCallback((project: ProjectItem) => {
     const card = cardRefs.current.get(project.title);
     if (!card) return;
     const rect = card.getBoundingClientRect();
@@ -155,7 +148,7 @@ export default function ProjectModal({ projects, showDates = false, fullWidth = 
               if (el) cardRefs.current.set(project.title, el);
             }}
             onClick={() => handleOpen(project)}
-            className="group block text-left cursor-pointer  hover:text-neutral-900"
+            className="group block text-left cursor-pointer hover:text-neutral-900 outline-none"
             style={{
               opacity: selectedTitle === project.title && !isClosing ? 0 : 1,
               transition: "opacity 80ms",
@@ -165,9 +158,9 @@ export default function ProjectModal({ projects, showDates = false, fullWidth = 
               <h3 className="text-sm font-normal text-neutral-700 group-hover:text-neutral-800 transition-colors text-balance">
                 {project.title}
               </h3>
-              {project.badge && (
+              {project.badge_path && (
                 <img
-                  src={project.badge}
+                  src={project.badge_path}
                   alt=""
                   className="h-[17px] w-[17px] rounded border-[px] border-neutral-200 object-cover flex-shrink-0"
                 />
@@ -216,36 +209,26 @@ export default function ProjectModal({ projects, showDates = false, fullWidth = 
                 transition: "opacity 100ms cubic-bezier(0.33, 0, 0.2, 1)",
               }}
             >
-              {/* Close button */}
-              <button
-                onClick={handleClose}
-                className="absolute top-3 right-3 w-7 h-7 flex items-center justify-center rounded-full hover:bg-neutral-100 transition-colors text-neutral-400 hover:text-black cursor-pointer z-10"
-              >
-                <svg
-                  width="12"
-                  height="12"
-                  viewBox="0 0 14 14"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                >
-                  <path d="M1 1l12 12M13 1L1 13" />
-                </svg>
-              </button>
+
 
               <div className="text-center mb-1">
                 <h2 className="text-2xl font-bold tracking-tight text-black">
                   {modal.project.title}
                 </h2>
-                <span className="text-[11px] font-mono text-neutral-300">
+                <span className="text-[11px]   text-neutral-300">
                   {modal.project.date}
                 </span>
               </div>
 
-              <p className="text-[15px] text-neutral-600 leading-relaxed mb-8 text-center max-w-lg mx-auto mt-4">
-                {modal.project.description}
-              </p>
+              {modal.project.mdxSource ? (
+                <div className="prose prose-neutral prose-sm max-w-lg mx-auto mt-4 mb-8 text-center">
+                  <MDXRemote {...modal.project.mdxSource} />
+                </div>
+              ) : (
+                <p className="text-[15px] text-neutral-600 leading-relaxed mb-8 text-center max-w-lg mx-auto mt-4">
+                  {modal.project.description}
+                </p>
+              )}
 
               <div className="text-center">
                 <a
