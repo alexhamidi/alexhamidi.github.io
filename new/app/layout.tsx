@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
 import { JetBrains_Mono, Lora } from "next/font/google";
 import "./globals.css";
-import AudioPlayer from "./components/AudioPlayer";
-import CursorSync from "./components/CursorSync";
 
 const mono = JetBrains_Mono({
   variable: "--font-mono",
@@ -18,8 +16,7 @@ export const metadata: Metadata = {
   title: "alex's webpage",
   description: "Alex Hamidi's personal website",
   icons: {
-    icon: "/favicon-16x16.png",
-    apple: "/apple-touch-icon.png",
+    icon: "/favicon.ico",
   },
 };
 
@@ -33,34 +30,30 @@ export default function RootLayout({
       <body className={`${mono.variable} ${lora.variable} antialiased`}>
         <div
           style={{
-            position: 'fixed',
+            position: "fixed",
             top: 0,
             left: 0,
-            width: '100%',
-            height: '100%',
-            backgroundImage: 'url(/bg.gif)',
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            backgroundRepeat: 'no-repeat',
-            zIndex: -2
+            width: "100%",
+            height: "100%",
+            backgroundImage: "url(/bg.gif)",
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            backgroundRepeat: "no-repeat",
+            zIndex: -2,
           }}
         />
         <div
           style={{
-            position: 'fixed',
+            position: "fixed",
             top: 0,
             left: 0,
-            width: '100%',
-            height: '100%',
-            backgroundColor: 'rgb(255, 255, 255, .1)',
-            zIndex: -1
+            width: "100%",
+            height: "100%",
+            backgroundColor: "rgb(255, 255, 255, .1)",
+            zIndex: -1,
           }}
         />
-        <CursorSync />
-        <main className="min-h-screen">
-          {children}
-        </main>
-        <AudioPlayer />
+        <main className="min-h-screen">{children}</main>
       </body>
     </html>
   );

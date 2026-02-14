@@ -50,9 +50,11 @@ export default function VideoPlayer({ slug }: VideoPlayerProps) {
 
   return (
     <>
-      <div 
-        className={`fixed inset-0 bg-black ${!disableTransition ? 'transition-opacity duration-[800ms] ease-in-out' : ''} ${
-          isTransitioning || isFullscreen ? 'opacity-100 z-40' : 'opacity-0 pointer-events-none -z-10'
+      <div
+        className={`fixed inset-0 bg-black ${!disableTransition ? "transition-opacity duration-[800ms] ease-in-out" : ""} ${
+          isTransitioning || isFullscreen
+            ? "opacity-100 z-40"
+            : "opacity-0 pointer-events-none -z-10"
         }`}
       />
 
@@ -76,11 +78,11 @@ export default function VideoPlayer({ slug }: VideoPlayerProps) {
         </div>
       )}
 
-      <div 
-        className={`relative w-full mt-20 cursor-pointer ${!disableTransition ? 'transition-all duration-[800ms] ease-in-out' : ''} ${
+      <div
+        className={`relative w-full mt-20 cursor-pointer ${!disableTransition ? "transition-all duration-[800ms] ease-in-out" : ""} ${
           isTransitioning || isFullscreen
-            ? 'fixed inset-0 !w-screen !h-screen z-[45] max-w-none !mt-0 overflow-hidden bg-black flex items-center justify-center' 
-            : 'max-w-4xl'
+            ? "fixed inset-0 !w-screen !h-screen z-[45] max-w-none !mt-0 overflow-hidden bg-black flex items-center justify-center"
+            : "max-w-4xl"
         }`}
         onClick={!isFullscreen && !isTransitioning ? startVideo : undefined}
       >
@@ -91,12 +93,16 @@ export default function VideoPlayer({ slug }: VideoPlayerProps) {
           muted
           playsInline
           preload="auto"
-          className={`w-full ${!disableTransition ? 'transition-all duration-[800ms] ease-in-out' : ''} ${
+          className={`w-full ${!disableTransition ? "transition-all duration-[800ms] ease-in-out" : ""} ${
             isTransitioning || isFullscreen
-              ? 'h-full object-contain border-0 rounded-none' 
-              : 'border border-gray-400 rounded-2xl'
+              ? "h-full object-contain border-0 rounded-none"
+              : "border border-gray-400 rounded-2xl"
           }`}
-          style={!isTransitioning && !isFullscreen ? { aspectRatio: '16/9' } : undefined}
+          style={
+            !isTransitioning && !isFullscreen
+              ? { aspectRatio: "16/9" }
+              : undefined
+          }
         />
       </div>
     </>

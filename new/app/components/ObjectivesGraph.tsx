@@ -9,13 +9,37 @@ interface ObjectiveNode {
 }
 
 const objectives: ObjectiveNode[] = [
-  { id: "fulfillment", label: "Interacting with friends", children: ["mastery", "impact", "connection"] },
-  { id: "freedom", label: "Freedom", children: ["wealth", "health", "mastery"] },
-  { id: "mastery", label: "Mastery", children: ["deep-work", "learn-daily", "build"] },
-  { id: "impact", label: "Impact", children: ["build", "teach", "open-source"] },
-  { id: "connection", label: "Connection", children: ["presence", "generosity"] },
+  {
+    id: "fulfillment",
+    label: "Interacting with friends",
+    children: ["mastery", "impact", "connection"],
+  },
+  {
+    id: "freedom",
+    label: "Freedom",
+    children: ["wealth", "health", "mastery"],
+  },
+  {
+    id: "mastery",
+    label: "Mastery",
+    children: ["deep-work", "learn-daily", "build"],
+  },
+  {
+    id: "impact",
+    label: "Impact",
+    children: ["build", "teach", "open-source"],
+  },
+  {
+    id: "connection",
+    label: "Connection",
+    children: ["presence", "generosity"],
+  },
   { id: "wealth", label: "Wealth", children: ["build", "invest", "leverage"] },
-  { id: "health", label: "Health", children: ["exercise", "sleep", "nutrition"] },
+  {
+    id: "health",
+    label: "Health",
+    children: ["exercise", "sleep", "nutrition"],
+  },
   { id: "deep-work", label: "Deep Work", children: [] },
   { id: "learn-daily", label: "Learn Daily", children: [] },
   { id: "build", label: "Build", children: ["ship-weekly"] },
@@ -46,7 +70,10 @@ interface NodePosition {
   y: number;
 }
 
-const rootColors: Record<string, { main: string; light: string; border: string }> = {
+const rootColors: Record<
+  string,
+  { main: string; light: string; border: string }
+> = {
   fulfillment: { main: "#3b82f6", light: "#dbeafe", border: "#2563eb" },
   freedom: { main: "#8b5cf6", light: "#ede9fe", border: "#7c3aed" },
 };
@@ -173,13 +200,8 @@ export default function ObjectivesGraph() {
   const getPos = (id: string) => positions.find((p) => p.id === id);
 
   return (
-    <div
-      ref={containerRef}
-      className="relative py-8"
-    >
-      <svg
-        className="absolute top-0 left-0 w-full h-full pointer-events-none overflow-visible"
-      >
+    <div ref={containerRef} className="relative py-8">
+      <svg className="absolute top-0 left-0 w-full h-full pointer-events-none overflow-visible">
         {edges.map(({ from, to }) => {
           const fromPos = getPos(from);
           const toPos = getPos(to);
@@ -204,14 +226,9 @@ export default function ObjectivesGraph() {
         })}
       </svg>
 
-      <div
-        className="flex flex-col gap-12"
-      >
+      <div className="flex flex-col gap-12">
         {levels.map((level, depth) => (
-          <div
-            key={depth}
-            className="flex justify-center gap-6 flex-wrap"
-          >
+          <div key={depth} className="flex justify-center gap-6 flex-wrap">
             {level.map((id) => {
               const node = getNodeById(id);
               if (!node) return null;
@@ -236,8 +253,8 @@ export default function ObjectivesGraph() {
                   onMouseEnter={() => setHoveredNode(id)}
                   onMouseLeave={() => setHoveredNode(null)}
                   className={`relative py-2.5 px-5 rounded-full border-2 text-sm font-medium transition-all duration-200 ease-in-out whitespace-nowrap ${
-                    hasChildren ? 'cursor-pointer' : 'cursor-default'
-                  } ${isHovered ? 'scale-105' : 'scale-100'}`}
+                    hasChildren ? "cursor-pointer" : "cursor-default"
+                  } ${isHovered ? "scale-105" : "scale-100"}`}
                   style={{
                     borderColor: isExpanded ? colors.main : colors.border,
                     backgroundColor: isExpanded ? colors.main : colors.light,
@@ -246,9 +263,7 @@ export default function ObjectivesGraph() {
                 >
                   {node.label}
                   {hasChildren && (
-                    <span
-                      className="ml-1.5 text-[0.7rem] opacity-60"
-                    >
+                    <span className="ml-1.5 text-[0.7rem] opacity-60">
                       {isExpanded ? "−" : "+"}
                     </span>
                   )}

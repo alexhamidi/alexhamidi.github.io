@@ -1,7 +1,3 @@
 export default function Stimulus() {
-  return (
-    <div>
-      
-    </div>
-  );
+  return <div></div>;
 }

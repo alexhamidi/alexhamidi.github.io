@@ -28,28 +28,23 @@ const projects: NavItem[] = [
 ];
 
 export default function SectionNav({ books }: SectionNavProps) {
-  const [activeSection, setActiveSection] = useState<string>("projects");
+  const [activeSection, setActiveSection] = useState<string>("start");
   const isClickScrolling = useRef(false);
   const clickTimeout = useRef<NodeJS.Timeout>(undefined);
 
   const bookItems: NavItem[] = books.map((b) => ({
     label: b.title.length > 20 ? b.title.slice(0, 18) + "\u2026" : b.title,
-    year: new Date(b.date).getFullYear().toString(),
+    year: b.date || undefined,
   }));
 
   const sections: NavSection[] = [
+    { title: "Home", sectionId: "start" },
+    { title: "Work", sectionId: "work" },
     { title: "Projects", sectionId: "projects", items: projects },
+    { title: "Writing", sectionId: "writing" },
+    { title: "Music", sectionId: "music" },
+    { title: "Gallery", sectionId: "gallery" },
     { title: "Reading", sectionId: "reading", items: bookItems },
-    { title: "Thoughts", sectionId: "thoughts" },
-    {
-      title: "Favorites",
-      sectionId: "favorites",
-      items: [
-        { label: "Music", scrollId: "fav-music" },
-        { label: "Art", scrollId: "fav-art" },
-        { label: "Quotes", scrollId: "fav-quotes" },
-      ],
-    },
   ];
 
   const handleClick = useCallback((sectionId: string) => {
@@ -85,7 +80,10 @@ export default function SectionNav({ books }: SectionNavProps) {
         const candidates: { id: string; top: number }[] = [];
         for (const entry of entries) {
           if (entry.isIntersecting) {
-            candidates.push({ id: entry.target.id, top: entry.boundingClientRect.top });
+            candidates.push({
+              id: entry.target.id,
+              top: entry.boundingClientRect.top,
+            });
           }
         }
 
@@ -94,7 +92,7 @@ export default function SectionNav({ books }: SectionNavProps) {
           setActiveSection(candidates[0].id);
         }
       },
-      { rootMargin: "0px 0px -75% 0px", threshold: 0 }
+      { rootMargin: "0px 0px -75% 0px", threshold: 0 },
     );
 
     els.forEach((el) => observer.observe(el));
@@ -102,13 +100,15 @@ export default function SectionNav({ books }: SectionNavProps) {
       observer.disconnect();
       if (clickTimeout.current) clearTimeout(clickTimeout.current);
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const socialLinks = [
     { href: "https://twitter.com/ahamidi_", label: "Twitter" },
     { href: "https://github.com/alexhamidi", label: "GitHub" },
-    { href: "https://www.linkedin.com/in/alexander-hamidi-208736254/", label: "LinkedIn" },
+    { href: "https://news.ycombinator.com/user?id=alexhamidi", label: "HN" },
+    { href: "https://open.spotify.com/user/alexhamidi", label: "Spotify" },
+    { href: "https://letterboxd.com/alexhamidi", label: "Letterboxd" },
   ];
 
   return (
@@ -125,7 +125,9 @@ export default function SectionNav({ books }: SectionNavProps) {
             >
               <span
                 className={`text-[13px] tracking-wide uppercase ${
-                  isActive ? "text-black font-semibold" : "text-neutral-600 font-medium"
+                  isActive
+                    ? "text-black font-semibold"
+                    : "text-neutral-600 font-medium"
                 }`}
               >
                 {section.title}
@@ -137,16 +139,26 @@ export default function SectionNav({ books }: SectionNavProps) {
                 {section.items.map((item, i) => (
                   <button
                     key={`${item.label}-${i}`}
-                    onClick={item.scrollId ? () => handleClick(item.scrollId!) : undefined}
+                    onClick={
+                      item.scrollId
+                        ? () => handleClick(item.scrollId!)
+                        : undefined
+                    }
                     className={`nav-leader-item text-neutral-400 bg-transparent border-0 p-0 text-left ${
-                      item.scrollId ? "cursor-pointer hover:text-neutral-600" : ""
+                      item.scrollId
+                        ? "cursor-pointer hover:text-neutral-600"
+                        : ""
                     } transition-colors duration-150`}
                   >
-                    <span className="nav-leader-label text-[12px]">{item.label}</span>
+                    <span className="nav-leader-label text-[12px]">
+                      {item.label}
+                    </span>
                     {item.year && (
                       <>
                         <span className="nav-leader-dots" />
-                        <span className="nav-leader-year text-[12px] font-mono">{item.year}</span>
+                        <span className="nav-leader-year text-[12px] font-mono">
+                          {item.year}
+                        </span>
                       </>
                     )}
                   </button>
@@ -157,19 +169,71 @@ export default function SectionNav({ books }: SectionNavProps) {
         );
       })}
 
-      <div className="mt-auto pt-6 flex flex-col gap-1.5 ml-4">
+      <div className="mt-auto pt-16 flex flex-col gap-5">
         {socialLinks.map((link) => (
           <a
             key={link.label}
             href={link.href}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-[12px] no-underline text-neutral-300 hover:text-black transition-colors duration-200"
+            className="text-[13px] tracking-wide uppercase no-underline text-neutral-600 font-medium opacity-40 hover:opacity-70 transition-all duration-200 flex items-center gap-1.5"
           >
             {link.label}
+            <svg
+              width="10"
+              height="10"
+              viewBox="0 0 12 12"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M3.5 1.5H10.5V8.5" />
+              <path d="M10.5 1.5L1.5 10.5" />
+            </svg>
           </a>
         ))}
+        {/* <CopyEmailButton /> */}
       </div>
     </nav>
+  );
+}
+
+function CopyEmailButton() {
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText("alexanderhamidi1@gmail.com");
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  return (
+    <button
+      onClick={handleCopy}
+      className="text-[13px] tracking-wide uppercase text-neutral-600 font-medium opacity-40 hover:opacity-70 transition-all duration-200 flex items-center gap-1.5 bg-transparent border-0 p-0 cursor-pointer text-left"
+    >
+      {copied ? "Copied!" : "Email"}
+      <svg
+        width="10"
+        height="10"
+        viewBox="0 0 12 12"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        {copied ? (
+          <path d="M2 6L5 9L10 3" />
+        ) : (
+          <>
+            <rect x="4" y="4" width="7" height="7" rx="1" />
+            <path d="M8 4V2a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v5a1 1 0 0 0 1 1h2" />
+          </>
+        )}
+      </svg>
+    </button>
   );
 }
