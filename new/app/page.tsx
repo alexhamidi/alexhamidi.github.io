@@ -6,6 +6,8 @@ import PhotoGrid from "./components/PhotoGrid";
 import QuoteGrid from "./components/QuoteGrid";
 import MusicCard from "./components/MusicCard";
 import ContactForm from "./components/ContactForm";
+import PostItWall from "./components/PostItWall";
+import ScrollRestore from "./components/ScrollRestore";
 import fs from "fs";
 import path from "path";
 
@@ -91,22 +93,13 @@ const projects = [
 
 const work = [
   {
-    title: "Clado",
+    title: "Palantir",
     description:
-      "A new query language designed specifically for people search. Write expressive filters across professional networks, social graphs, and public records in a natural syntax.",
-    date: "2025",
+      "Incoming Production Engineer. I am ideologically aligned with the work I expect to do here. ",
+    date: "2026",
     link: "https://github.com/alexhamidi",
     tags: ["TypeScript", "Search"],
-    badge: "/badges/clado.png",
-  },
-  {
-    title: "APSS",
-    description:
-      "Agentic Program Search System — a framework for composing LLM systems by searching over program spaces. Combines code generation with evaluation to find optimal agent architectures.",
-    date: "2025",
-    link: "https://github.com/alexhamidi/APSS",
-    tags: ["Python", "AI"],
-    badge: "/badges/sd.png",
+    badge: "/badges/pltr.png",
   },
   {
     title: "Conway AI",
@@ -118,6 +111,15 @@ const work = [
     badge: "/badges/conway.png",
   },
   {
+    title: "Clado",
+    description:
+      "A new query language designed specifically for people search. Write expressive filters across professional networks, social graphs, and public records in a natural syntax.",
+    date: "2025",
+    link: "https://github.com/alexhamidi",
+    tags: ["TypeScript", "Search"],
+    badge: "/badges/clado.png",
+  },
+  {
     title: "AWS Automation",
     description:
       "A collection of automation scripts for AWS infrastructure. Handles provisioning, scaling, monitoring, and teardown of cloud resources with minimal configuration.",
@@ -126,6 +128,17 @@ const work = [
     tags: ["Python", "Infra"],
     badge: "/badges/aws.png",
   },
+  {
+    title: "APSS",
+    description:
+      "Agentic Program Search System — a framework for composing LLM systems by searching over program spaces. Combines code generation with evaluation to find optimal agent architectures.",
+    date: "2025",
+    link: "https://github.com/alexhamidi/APSS",
+    tags: ["Python", "AI"],
+    badge: "/badges/sd.png",
+  },
+
+
 ];
 
 const books: Book3D[] = [
@@ -306,6 +319,7 @@ export default function Home() {
 
   return (
     <div className="w-full">
+      <ScrollRestore />
       {/* Hero */}
       <section id="start" className="max-w-4xl mx-auto px-8 md:px-16 pt-20">
         <h1
@@ -337,6 +351,19 @@ export default function Home() {
           Outside of code I make music, shoot film, and read too many books.
           Every experience is an opportunity to understand the world and myself
           better.
+
+          {/*
+          
+          stuff here:
+          - Me:
+          - sdx, ucsd
+          - olympiads
+          - principles:
+            - everything we do has a purpose
+            - speed is essential
+            - fff
+          - invite discourse 
+          */}
         </p>
         <p className="mt-5 text-base text-neutral-500 leading-relaxed">
           I did IPHo and ICPC (regional winner)
@@ -390,15 +417,14 @@ export default function Home() {
             <BookGrid books={books} />
           </section>
 
-          {/* <section id="quotes" className="scroll-mt-8 mb-16 mt-10">
-            <SectionHeader title="quotes" />
-            <QuoteGrid quotes={quotes} />
-          </section> */}
+          <section id="wall" className="scroll-mt-8 mb-16 mt-10">
+            <SectionHeader title="wall" />
+            <PostItWall />
+            <div className="mt-6">
+              <ContactForm />
+            </div>
+          </section>
         </div>
-      </div>
-
-      <div className="max-w-4xl mx-auto px-8 md:px-16 mb-12 mt-192">
-        <ContactForm />
       </div>
 
       {/* Mobile footer */}

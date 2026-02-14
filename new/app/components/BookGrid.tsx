@@ -62,6 +62,7 @@ function useZoomModal() {
 
 export default function BookGrid({ books }: { books: Book3D[] }) {
   const { modal, modalRef, open, close } = useZoomModal();
+  const bookRefs = useRef<Map<number, HTMLButtonElement>>(new Map());
   const isExpanded = modal.phase === "open";
   const isClosing = modal.phase === "closing";
   const isVisible = modal.phase !== "closed";
@@ -70,6 +71,20 @@ export default function BookGrid({ books }: { books: Book3D[] }) {
     const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
     open(rect, index);
   };
+
+  // Listen for sidebar open requests
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const title = (e as CustomEvent).detail;
+      const index = books.findIndex((b) => b.title === title);
+      if (index === -1) return;
+      const el = bookRefs.current.get(index);
+      if (!el) return;
+      open(el.getBoundingClientRect(), index);
+    };
+    window.addEventListener("open-modal", handler);
+    return () => window.removeEventListener("open-modal", handler);
+  }, [books, open]);
 
   const getModalStyle = (): React.CSSProperties => {
     if (!isVisible) return {};
@@ -131,6 +146,7 @@ export default function BookGrid({ books }: { books: Book3D[] }) {
         {books.map((book, i) => (
           <button
             key={book.title}
+            ref={(el) => { if (el) bookRefs.current.set(i, el); }}
             onClick={(e) => handleClick(i, e)}
             style={{
               display: "flex",

@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback, useRef } from "react";
 
 interface NavItem {
   label: string;
+  fullTitle?: string;
   year?: string;
   scrollId?: string;
 }
@@ -19,12 +20,12 @@ interface SectionNavProps {
 }
 
 const projects: NavItem[] = [
-  { label: "Samantha", year: "2025" },
-  { label: "Monotool", year: "2025" },
-  { label: "AutoMCP", year: "2025" },
-  { label: "Umari", year: "2025" },
-  { label: "Clado", year: "2025" },
-  { label: "Graphit", year: "2025" },
+  { label: "Samantha", fullTitle: "Samantha", year: "2025" },
+  { label: "Monotool", fullTitle: "Monotool", year: "2025" },
+  { label: "AutoMCP", fullTitle: "AutoMCP", year: "2025" },
+  { label: "Umari", fullTitle: "Umari", year: "2025" },
+  { label: "Clado", fullTitle: "Clado", year: "2025" },
+  { label: "Graphit", fullTitle: "Graphit", year: "2025" },
 ];
 
 export default function SectionNav({ books }: SectionNavProps) {
@@ -34,6 +35,7 @@ export default function SectionNav({ books }: SectionNavProps) {
 
   const bookItems: NavItem[] = books.map((b) => ({
     label: b.title.length > 20 ? b.title.slice(0, 18) + "\u2026" : b.title,
+    fullTitle: b.title,
     year: b.date || undefined,
   }));
 
@@ -45,10 +47,10 @@ export default function SectionNav({ books }: SectionNavProps) {
     { title: "Music", sectionId: "music" },
     { title: "Gallery", sectionId: "gallery" },
     { title: "Reading", sectionId: "reading", items: bookItems },
+    { title: "Wall", sectionId: "wall" },
   ];
 
   const handleClick = useCallback((sectionId: string) => {
-    // Lock the observer while we scroll programmatically
     isClickScrolling.current = true;
     setActiveSection(sectionId);
 
@@ -57,12 +59,16 @@ export default function SectionNav({ books }: SectionNavProps) {
       el.scrollIntoView({ behavior: "smooth", block: "start" });
     }
 
-    // Unlock after scroll settles
     if (clickTimeout.current) clearTimeout(clickTimeout.current);
     clickTimeout.current = setTimeout(() => {
       isClickScrolling.current = false;
     }, 800);
   }, []);
+
+  const handleItemClick = useCallback((sectionId: string, title: string) => {
+    handleClick(sectionId);
+    window.dispatchEvent(new CustomEvent("open-modal", { detail: title }));
+  }, [handleClick]);
 
   useEffect(() => {
     const sectionIds = sections.map((s) => s.sectionId);
@@ -139,16 +145,8 @@ export default function SectionNav({ books }: SectionNavProps) {
                 {section.items.map((item, i) => (
                   <button
                     key={`${item.label}-${i}`}
-                    onClick={
-                      item.scrollId
-                        ? () => handleClick(item.scrollId!)
-                        : undefined
-                    }
-                    className={`nav-leader-item text-neutral-400 bg-transparent border-0 p-0 text-left ${
-                      item.scrollId
-                        ? "cursor-pointer hover:text-neutral-600"
-                        : ""
-                    } transition-colors duration-150`}
+                    onClick={() => handleItemClick(section.sectionId, item.fullTitle || item.label)}
+                    className="nav-leader-item text-neutral-400 bg-transparent border-0 p-0 text-left cursor-pointer hover:text-neutral-600 transition-colors duration-150"
                   >
                     <span className="nav-leader-label text-[12px]">
                       {item.label}

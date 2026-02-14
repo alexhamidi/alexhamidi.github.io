@@ -80,7 +80,7 @@ function TrackCard({ track }: { track: Track }) {
 
   return (
     <div
-      className="relative rounded-xl overflow-hidden group cursor-pointer aspect-square"
+      className="relative rounded-lg overflow-hidden group cursor-pointer aspect-[4/3]"
       onClick={toggle}
     >
       {/* Background */}
@@ -91,13 +91,13 @@ function TrackCard({ track }: { track: Track }) {
         loading="lazy"
       />
       {/* Overlay */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-black/10" />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
 
       {/* Content */}
       <div className="relative z-10 flex flex-col justify-between h-full p-4">
         {/* Play indicator */}
         <div className="flex justify-end">
-          <div className="w-8 h-8 rounded-full bg-white/15 backdrop-blur-sm flex items-center justify-center transition-all group-hover:bg-white/25">
+          <div className="w-8 h-8 rounded-full bg-black/20 backdrop-blur-md flex items-center justify-center transition-all group-hover:bg-black/40">
             {playing ? (
               <svg width="12" height="12" viewBox="0 0 12 12" fill="white">
                 <rect x="1" y="1" width="3.5" height="10" rx="1" />
@@ -113,7 +113,7 @@ function TrackCard({ track }: { track: Track }) {
 
         {/* Bottom info */}
         <div>
-          <h3 className="text-white text-sm font-semibold tracking-tight mb-2 drop-shadow-md">
+          <h3 className="text-white text-[13px] font-medium tracking-wide  mb-2">
             {track.title}
           </h3>
 

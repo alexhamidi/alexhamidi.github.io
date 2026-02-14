@@ -75,6 +75,17 @@ export default function ProjectModal({ projects, showDates = false, fullWidth = 
     return () => window.removeEventListener("keydown", onKey);
   }, [modal.phase, handleClose]);
 
+  // Listen for sidebar open requests
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const title = (e as CustomEvent).detail;
+      const project = projects.find((p) => p.title === title);
+      if (project) handleOpen(project);
+    };
+    window.addEventListener("open-modal", handler);
+    return () => window.removeEventListener("open-modal", handler);
+  }, [projects, handleOpen]);
+
   // Cleanup scroll lock on unmount
   useEffect(() => {
     return () => {
