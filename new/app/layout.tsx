@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { JetBrains_Mono, Lora } from "next/font/google";
 import "./globals.css";
+import "katex/dist/katex.min.css";
 
 const mono = JetBrains_Mono({
   variable: "-- ",

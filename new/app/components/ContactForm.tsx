@@ -1,14 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import { addPostIt } from "./PostItWall";
+// import { addPostIt } from "./PostItWall";
 
 export default function ContactForm() {
   const [message, setMessage] = useState("");
 
   const handleSend = () => {
     if (!message.trim()) return;
-    addPostIt(message.trim());
+    // addPostIt(message.trim());
     setMessage("");
   };
 
@@ -18,20 +18,14 @@ export default function ContactForm() {
         e.preventDefault();
         handleSend();
       }}
-      className="relative flex items-center"
+      className="relative flex items-start mt-6"
     >
       <textarea
         value={message}
         onChange={(e) => setMessage(e.target.value)}
-        placeholder="leave a note"
-        rows={1}
-        className="w-full resize-none text-sm bg-transparent border-[1.5px] border-neutral-600 rounded outline-none px-3 py-2 pr-14 text-neutral-600 placeholder:text-neutral-300 transition-colors duration-200"
-        onKeyDown={(e) => {
-          if (e.key === "Enter" && !e.shiftKey) {
-            e.preventDefault();
-            handleSend();
-          }
-        }}
+        placeholder="Type your message here. If you want me to respond, don't forget to include your contact information!"
+        rows={3}
+        className="w-full resize-none text-sm bg-transparent border-[1.5px] border-neutral-600 rounded outline-none px-3 py-2 pr-14 text-neutral-600 placeholder:text-neutral-400 transition-colors duration-200"
       />
       <button
         type="submit"

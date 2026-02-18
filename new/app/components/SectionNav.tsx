@@ -47,7 +47,7 @@ export default function SectionNav({ books }: SectionNavProps) {
     { title: "Music", sectionId: "music" },
     { title: "Gallery", sectionId: "gallery" },
     { title: "Reading", sectionId: "reading" }, // items: bookItems },
-    { title: "Wall", sectionId: "wall" },
+    // { title: "Wall", sectionId: "wall" },
   ];
 
   const handleClick = useCallback((sectionId: string) => {
@@ -118,6 +118,7 @@ export default function SectionNav({ books }: SectionNavProps) {
     { href: "https://news.ycombinator.com/user?id=alexhamidi", label: "HN" },
     { href: "https://open.spotify.com/user/alexhamidi", label: "Spotify" },
     { href: "https://letterboxd.com/alexhamidi", label: "Letterboxd" },
+    { href: "https://www.midjourney.com/@ahamidi?tab=archive", label: "Midjourney" },
   ];
 
   return (

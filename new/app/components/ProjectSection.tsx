@@ -1,7 +1,10 @@
 "use client";
 
 import { useState, useRef, useCallback, useEffect } from "react";
-import { MDXRemote, type MDXRemoteSerializeResult } from "next-mdx-remote";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+import remarkMath from "remark-math";
+import rehypeKatex from "rehype-katex";
 import { ProjectItem } from "../utils/interfaces"
 
 type ModalState =
@@ -10,7 +13,7 @@ type ModalState =
   | { phase: "open"; project: ProjectItem; startRect: DOMRect }
   | { phase: "closing"; project: ProjectItem; startRect: DOMRect };
 
-export default function ProjectSection({ projects, showDates = false, fullWidth = false }: { projects: ProjectItem[]; showDates?: boolean; fullWidth?: boolean }) {
+export default function ProjectSection({ projects, showDates = false, fullWidth = false, static: isStatic = false }: { projects: ProjectItem[]; showDates?: boolean; fullWidth?: boolean; static?: boolean }) {
   const [modal, setModal] = useState<ModalState>({ phase: "closed" });
   const cardRefs = useRef<Map<string, HTMLButtonElement>>(new Map());
   const modalRef = useRef<HTMLDivElement>(null);
@@ -33,11 +36,13 @@ export default function ProjectSection({ projects, showDates = false, fullWidth 
     if (!card) return;
     const rect = card.getBoundingClientRect();
     document.body.style.overflow = "hidden";
+    window.history.pushState(null, "", `?o=${project.slug ?? project.title}`);
     setModal({ phase: "expanding", project, startRect: rect });
   }, []);
 
   const handleClose = useCallback(() => {
     if (modal.phase === "open" || modal.phase === "expanding") {
+      window.history.pushState(null, "", window.location.pathname);
       setModal({ ...modal, phase: "closing" } as ModalState);
       setTimeout(() => {
         document.body.style.overflow = "";
@@ -57,6 +62,17 @@ export default function ProjectSection({ projects, showDates = false, fullWidth 
       });
     }
   }, [modal.phase]);
+
+  // Open modal from URL param on mount
+  useEffect(() => {
+    const slug = new URLSearchParams(window.location.search).get("o");
+    if (!slug) return;
+    const project = projects.find((p) => (p.slug ?? p.title) === slug);
+    if (!project) return;
+    // Wait for refs to be populated
+    requestAnimationFrame(() => handleOpen(project));
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Close on escape
   useEffect(() => {
@@ -141,41 +157,57 @@ export default function ProjectSection({ projects, showDates = false, fullWidth 
   return (
     <>
       <div className={`grid gap-y-12 ${fullWidth ? "grid-cols-1" : "grid-cols-1 md:grid-cols-2 gap-x-8"}`}>
-        {projects.map((project) => (
-          <button
-            key={project.title}
-            ref={(el) => {
-              if (el) cardRefs.current.set(project.title, el);
-            }}
-            onClick={() => handleOpen(project)}
-            className="group block text-left cursor-pointer hover:text-neutral-900 outline-none"
-            style={{
-              opacity: selectedTitle === project.title && !isClosing ? 0 : 1,
-              transition: "opacity 80ms",
-            }}
-          >
-            <div className="flex items-center gap-2 mb-1">
-              <h3 className="text-sm font-normal text-neutral-700 group-hover:text-neutral-800 transition-colors text-balance">
-                {project.title}
-              </h3>
-              {project.badge_path && (
-                <img
-                  src={project.badge_path}
-                  alt=""
-                  className="h-[17px] w-[17px] rounded border-[px] border-neutral-200 object-cover flex-shrink-0"
-                />
-              )}
-              {showDates && (
-                <span className="text-sm text-neutral-400 ml-auto flex-shrink-0">
-                  {project.date}
-                </span>
-              )}
-            </div>
-            <p className="text-neutral-400 group-hover:text-neutral-800 transition-colors leading-relaxed text-[13px] line-clamp-3">
-              {project.description}
-            </p>
-          </button>
-        ))}
+        {projects.map((project) => {
+          const inner = (
+            <>
+              <div className="flex items-center gap-2 mb-1">
+                <h3 className={`text-sm font-normal text-neutral-700 text-balance ${!isStatic ? "group-hover:text-neutral-800 transition-colors" : ""}`}>
+                  {project.title}
+                </h3>
+                {project.badge_path && (
+                  <img
+                    src={project.badge_path}
+                    alt=""
+                    className="h-[17px] w-[17px] rounded border-[px] border-neutral-200 object-cover flex-shrink-0"
+                  />
+                )}
+                {showDates && (
+                  <span className="text-sm text-neutral-400 ml-auto flex-shrink-0">
+                    {project.date}
+                  </span>
+                )}
+              </div>
+              <p className={`text-neutral-400 leading-relaxed text-[13px] line-clamp-3 ${!isStatic ? "group-hover:text-neutral-800 transition-colors" : ""}`}>
+                {project.description}
+              </p>
+            </>
+          );
+
+          if (isStatic) {
+            return (
+              <div key={project.title} className="block text-left">
+                {inner}
+              </div>
+            );
+          }
+
+          return (
+            <button
+              key={project.title}
+              ref={(el) => {
+                if (el) cardRefs.current.set(project.title, el);
+              }}
+              onClick={() => handleOpen(project)}
+              className="group block text-left cursor-pointer hover:text-neutral-900 outline-none"
+              style={{
+                opacity: selectedTitle === project.title && !isClosing ? 0 : 1,
+                transition: "opacity 80ms",
+              }}
+            >
+              {inner}
+            </button>
+          );
+        })}
       </div>
 
       {/* Overlay */}
@@ -203,55 +235,60 @@ export default function ProjectSection({ projects, showDates = false, fullWidth 
           >
             {/* Inner content */}
             <div
-              className="h-full overflow-auto p-5 md:p-6"
+              className="h-full overflow-auto p-5 md:p-10"
               style={{
                 opacity: isExpanded ? 1 : 0,
                 transition: "opacity 100ms cubic-bezier(0.33, 0, 0.2, 1)",
               }}
             >
-
-
-              <div className="text-center mb-1">
+              <div className="mb-4">
                 <h2 className="text-2xl font-bold tracking-tight text-black">
                   {modal.project.title}
                 </h2>
-                <span className="text-[11px]   text-neutral-300">
+                <span className="text-[11px] text-neutral-300">
                   {modal.project.date}
                 </span>
               </div>
 
-              {modal.project.mdxSource ? (
-                <div className="prose prose-neutral prose-sm max-w-lg mx-auto mt-4 mb-8 text-center">
-                  <MDXRemote {...modal.project.mdxSource} />
+              {modal.project.content ? (
+                <div className="prose prose-neutral max-w-2xl mt-4 mb-8">
+                  <ReactMarkdown
+                    remarkPlugins={[remarkGfm, remarkMath]}
+                    rehypePlugins={[rehypeKatex]}
+                  >
+                    {modal.project.content}
+                  </ReactMarkdown>
                 </div>
               ) : (
-                <p className="text-[15px] text-neutral-600 leading-relaxed mb-8 text-center max-w-lg mx-auto mt-4">
+                <p className="text-[15px] text-neutral-600 leading-relaxed mb-8 max-w-2xl mt-4">
                   {modal.project.description}
                 </p>
               )}
 
-              <div className="text-center">
-                <a
-                  href={modal.project.link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 text-[13px] font-medium text-black no-underline border-b border-neutral-300 hover:border-black transition-colors pb-0.5"
-                >
-                  View project
-                  <svg
-                    width="12"
-                    height="12"
-                    viewBox="0 0 12 12"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
+              {modal.project.link && (
+                <div>
+                  <a
+                    href={modal.project.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 text-[13px] font-medium text-black no-underline border-b border-neutral-300 hover:border-black transition-colors pb-0.5"
                   >
-                    <path d="M2.5 9.5l7-7M4 2.5h5.5V8" />
-                  </svg>
-                </a>
-              </div>
+                    View project
+                    <svg
+                      width="12"
+                      height="12"
+                      viewBox="0 0 12 12"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <path d="M2.5 9.5l7-7M4 2.5h5.5V8" />
+                    </svg>
+                  </a>
+                </div>
+              )}
             </div>
           </div>
         </>

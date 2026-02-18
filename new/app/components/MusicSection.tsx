@@ -133,11 +133,13 @@ function TrackCard({ item }: { item: MusicItem }) {
             </h3>
 
             {/* Numbers */}
-            <div className="flex gap-1 text-[11px] text-white/90   select-none">
-              <span>{fmt(currentTime)}</span>
-              <span className="opacity-50">/</span>
-              <span>{fmt(duration)}</span>
-            </div>
+            {duration > 0 && (
+              <div className="flex gap-1 text-[11px] text-white/90 select-none">
+                <span>{fmt(currentTime)}</span>
+                <span className="opacity-50">/</span>
+                <span>{fmt(duration)}</span>
+              </div>
+            )}
           </div>
 
           {/* Progress Bar Container */}

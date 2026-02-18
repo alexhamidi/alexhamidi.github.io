@@ -1,17 +1,20 @@
 "use client";
 
 import { useState, useRef, useCallback, useEffect } from "react";
+import { MDXRemote, type MDXRemoteSerializeResult } from "next-mdx-remote";
 
 export type Book3D = {
   title: string;
   coverUrl: string;
   spineColor: string;
-  date?: string;
+  textColor?: string;
+  author?: string;
+  mdxSource?: MDXRemoteSerializeResult;
 };
 
 // Exact adammaj.com dimensions
-const w = 41.5;
-const h = 220;
+const w = 39.4;
+const h = 231;
 
 type ModalState =
   | { phase: "closed" }
@@ -176,7 +179,7 @@ export default function BookGrid({ books }: { books: Book3D[] }) {
                 flexShrink: 0,
                 transformOrigin: "right",
                 backgroundColor: book.spineColor,
-                color: "#fff",
+                color: book.textColor || "#fff",
                 transform:
                   "translate3d(0px, 0px, 0px) scale3d(1, 1, 1) rotateX(0deg) rotateY(-60deg) rotateZ(0deg) skew(0deg, 0deg)",
                 transformStyle: "preserve-3d",
@@ -313,24 +316,53 @@ export default function BookGrid({ books }: { books: Book3D[] }) {
                   <path d="M1 1l12 12M13 1L1 13" />
                 </svg>
               </button>
-              <div className="flex flex-col items-center justify-center h-full gap-6">
-                <img
-                  src={books[modal.index].coverUrl}
-                  alt={books[modal.index].title}
-                  className="max-h-[70%] rounded-lg object-contain"
-                />
-                <h2
-                  className="text-xl font-bold tracking-tight text-black text-center max-w-md"
-                  style={{ fontFamily: "var(--font-serif), 'Lora', serif" }}
-                >
-                  {books[modal.index].title}
-                </h2>
-                {books[modal.index].date && (
-                  <span className="text-[11px]   text-neutral-300">
-                    {books[modal.index].date}
-                  </span>
-                )}
-              </div>
+              {(() => {
+                const book = books[(modal as any).index];
+                const hasContent = book.mdxSource && book.mdxSource.compiledSource;
+                return hasContent ? (
+                  <div className="flex flex-col md:flex-row gap-6 h-full">
+                    <div className="flex flex-col items-center gap-3 md:w-48 flex-shrink-0">
+                      <img
+                        src={book.coverUrl}
+                        alt={book.title}
+                        className="max-h-[240px] rounded-lg object-contain"
+                      />
+                      <h2
+                        className="text-lg font-bold tracking-tight text-black text-center"
+                        style={{ fontFamily: "var(--font-serif), 'Lora', serif" }}
+                      >
+                        {book.title}
+                      </h2>
+                      {book.author && (
+                        <span className="text-xs text-neutral-400">{book.author}</span>
+                      )}
+                    </div>
+                    <div className="flex-1 overflow-auto prose prose-sm prose-neutral max-w-none">
+                      <MDXRemote {...book.mdxSource!} />
+                    </div>
+                  </div>
+                ) : (
+                  <div className="flex flex-col items-center justify-center h-full gap-6">
+                    <img
+                      src={book.coverUrl}
+                      alt={book.title}
+                      className="max-h-[70%] rounded-lg object-contain"
+                    />
+                    <h2
+                      className="text-xl font-bold tracking-tight text-black text-center max-w-md"
+                      style={{ fontFamily: "var(--font-serif), 'Lora', serif" }}
+                    >
+                      {book.title}
+                    </h2>
+                    {book.author && (
+                      <span className="text-xs text-neutral-400">{book.author}</span>
+                    )}
+                    {book.rating && (
+                      <span className="text-xs text-neutral-400">{book.rating}/10</span>
+                    )}
+                  </div>
+                );
+              })()}
             </div>
           </div>
         </>

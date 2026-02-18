@@ -3,6 +3,9 @@ import path from "path";
 import matter from "gray-matter";
 import { serialize } from "next-mdx-remote/serialize";
 import type { MDXRemoteSerializeResult } from "next-mdx-remote";
+import remarkMath from "remark-math";
+import remarkGfm from "remark-gfm";
+import rehypeKatex from "rehype-katex";
 
 export type MDXItem<T> = T & {
   slug: string;
@@ -20,12 +23,24 @@ export async function getData<T>(type: string): Promise<MDXItem<T>[]> {
     files.map(async (file) => {
       const raw = fs.readFileSync(path.join(dir, file), "utf-8");
       const { data, content } = matter(raw);
-      const mdxSource = await serialize(content.trim());
+      let mdxSource;
+      try {
+        mdxSource = await serialize(content.trim(), {
+          mdxOptions: {
+            remarkPlugins: [remarkGfm, remarkMath],
+            rehypePlugins: [rehypeKatex],
+          },
+        });
+      } catch (e) {
+        console.error(`❌ MDX PARSE ERROR in: data/${type}/${file}`);
+        throw e;
+      }
 
       return {
         ...(data as T),
         slug: file.replace(/\.mdx$/, ""),
         mdxSource,
+        content: content.trim(),
         order: data.order ?? 999,
       };
     })

@@ -16,6 +16,18 @@ export interface ProjectItem {
   link: string;
   tags: string[];
   badge_path?: string;
+  slug?: string;
+  content?: string;
   mdxSource?: MDXRemoteSerializeResult;
 };
+
+export interface BookItem {
+  title: string;
+  author?: string;
+  coverUrl: string;
+  spineColor: string;
+  textColor?: string;
+  order: number;
+  mdxSource?: MDXRemoteSerializeResult;
+}
 
