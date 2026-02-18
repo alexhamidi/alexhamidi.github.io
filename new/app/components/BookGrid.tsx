@@ -9,6 +9,7 @@ export type Book3D = {
   spineColor: string;
   textColor?: string;
   author?: string;
+  rating?: number;
   mdxSource?: MDXRemoteSerializeResult;
 };
 
