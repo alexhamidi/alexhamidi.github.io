@@ -169,7 +169,7 @@ export default function BookGrid({ books }: { books: Book3D[] }) {
               cursor: "pointer",
             }}
           >
-            {/* SPINE — exact adammaj open state */}
+            {/* SPINE - exact adammaj open state */}
             <div
               style={{
                 display: "flex",
@@ -219,7 +219,7 @@ export default function BookGrid({ books }: { books: Book3D[] }) {
               </span>
             </div>
 
-            {/* COVER — exact adammaj open state */}
+            {/* COVER - exact adammaj open state */}
             <div
               style={{
                 position: "relative",

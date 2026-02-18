@@ -140,7 +140,7 @@ export default function ProjectSection({ projects, showDates = false, fullWidth 
       };
     }
 
-    // expanding (initial frame — match card position)
+    // expanding (initial frame - match card position)
     return {
       position: "fixed",
       top: startRect.top,

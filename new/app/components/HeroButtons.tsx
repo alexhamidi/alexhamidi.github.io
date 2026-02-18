@@ -57,13 +57,17 @@ export default function HeroButtons() {
 
   const handleSend = () => {
     if (!message.trim()) return;
-    // addPostIt(message.trim());
     if (textareaRef.current) textareaRef.current.blur();
     setAnimating(true);
     setOpen(false);
-    setTimeout(() => setMessage(""), 200);
     setSent(true);
+    setTimeout(() => setMessage(""), 200);
     setTimeout(() => setSent(false), 1500);
+    fetch("/api/send", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message }),
+    });
   };
 
   return (
@@ -85,7 +89,7 @@ export default function HeroButtons() {
           onClick={handleContact}
           className={`text-sm px-4 py-2 border rounded transition-colors cursor-pointer ${
             sent
-              ? "border-green-400 text-green-500"
+              ? "border-green-500 text-green-600"
               : "border-neutral-300 text-neutral-500 hover:border-black hover:text-black"
           }`}
         >

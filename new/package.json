@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@tailwindcss/typography": "^0.5.19",
+    "googleapis": "^171.4.0",
     "gray-matter": "^4.0.3",
     "katex": "^0.16.28",
     "next": "16.1.1",
