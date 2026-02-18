@@ -4,7 +4,6 @@ import ProjectSection from "./components/ProjectSection";
 import MusicSection from "./components/MusicSection";
 import BookGrid from "./components/BookGrid";
 import PhotoGrid from "./components/PhotoGrid";
-import ContactForm from "./components/ContactForm";
 // import PostItWall from "./components/PostItWall";
 import ScrollRestore from "./components/ScrollRestore";
 import HeroButtons from "./components/HeroButtons";
