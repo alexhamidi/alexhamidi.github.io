@@ -57,7 +57,7 @@ body::-webkit-scrollbar {
 .prose ol { list-style-type: decimal; }
 .prose li { margin-bottom: 0.25rem; }
 .prose blockquote { border-left: 3px solid #d1d5db; padding-left: 1rem; color: #6b7280; margin: 1rem 0; }
-.prose code { font-size: 0.875em; background: #f3f4f6; border-radius: 3px; padding: 0.15em 0.35em; }
+.prose code { font-size: 0.875em; background: #f3f4f6; border-radius: 3px; padding: 0.15em 0.35em; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Courier New", monospace; }
 .prose pre { background: #f3f4f6; border-radius: 6px; padding: 1rem 1.25rem; overflow-x: auto; margin: 1.25rem 0; }
 .prose pre code { background: none; padding: 0; }
 .prose table { width: 100%; border-collapse: collapse; margin: 1.25rem 0; font-size: 0.9rem; }
