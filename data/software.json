@@ -11,7 +11,7 @@
   },
   {
     "title": "Diffuser",
-    "description": "An audio to video diffusion transformer I hacked up myself.",
+    "description": "A cross-modal Diffusion Transformer (DiT) architecture for high-fidelity audio-to-video synthesis using latent diffusion and temporal attention.",
     "githubUrl": "https://github.com/alexhamidi/diffuser"
   },
   {
