@@ -11,7 +11,7 @@
   },
   {
     "title": "Diffuser",
-    "description": "hubert latents mapped to clip space via whitening transform for stable diffusion v1.5 conditioning with temporal ema smoothing.",
+    "description": "audio -> video diffusion visualizer. hubert latents mapped to clip space for sd v1.5 conditioning.",
     "githubUrl": "https://github.com/alexhamidi/diffuser"
   },
   {
