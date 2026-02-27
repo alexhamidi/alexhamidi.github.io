@@ -6,6 +6,8 @@ type SoftwareItem = {
   title: string;
   description: string;
   githubUrl: string;
+  month: string;
+  year: string;
 };
 
 function abbreviate(str: string, maxLen = 60): string {
@@ -34,11 +36,16 @@ export default async function SoftwarePage() {
                 rel="noopener noreferrer"
                 className="flex items-center justify-between gap-3 py-1.5 text-left no-underline group"
               >
-                <span className="text-[13px] font-normal text-neutral-800 group-hover:text-black transition-colors flex-shrink-0">
-                  {project.title}
-                </span>
-                <span className="text-[12px] text-neutral-400 text-right group-hover:text-black transition-colors truncate min-w-0">
-                  {abbreviate(project.description)}
+                <div className="flex items-center gap-3 min-w-0 flex-1">
+                  <span className="text-[13px] font-normal text-neutral-800 group-hover:text-black transition-colors flex-shrink-0">
+                    {project.title}
+                  </span>
+                  <span className="text-[12px] text-neutral-400 text-left group-hover:text-black transition-colors truncate min-w-0">
+                    {abbreviate(project.description)}
+                  </span>
+                </div>
+                <span className="text-[10px] font-mono font-medium uppercase text-neutral-400 group-hover:text-neutral-500 transition-colors flex-shrink-0 text-right">
+                  {project.month} {project.year}
                 </span>
               </a>
             </li>

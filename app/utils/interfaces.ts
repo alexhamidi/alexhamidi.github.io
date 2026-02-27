@@ -16,6 +16,7 @@ export interface ProjectItem {
   link: string;
   tags: string[];
   badge_path?: string;
+  image?: string;
   slug?: string;
   content?: string;
   mdxSource?: MDXRemoteSerializeResult;

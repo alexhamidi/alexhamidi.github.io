@@ -162,6 +162,15 @@ export default function ProjectSection({ projects, showDates = false, fullWidth 
         {projects.map((project) => {
           const inner = (
             <>
+              {project.image && (
+                <div className="mb-3 w-full aspect-video overflow-hidden rounded-lg border border-neutral-200">
+                  <img
+                    src={project.image}
+                    alt={project.title}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              )}
               <div className="flex items-center gap-2 mb-1">
                 <h3 className={`text-sm font-normal text-neutral-700 text-balance ${!isStatic ? "group-hover:text-neutral-800 transition-colors" : ""}`}>
                   {project.title}
