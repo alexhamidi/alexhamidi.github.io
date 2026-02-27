@@ -11,7 +11,7 @@
   },
   {
     "title": "Diffuser",
-    "description": "audio -> video diffusion visualizer. hubert latents mapped to clip space for sd v1.5 conditioning.",
+    "description": "realtime audio visualization using stable diffusion 1.5 and hubert audio encodings.",
     "githubUrl": "https://github.com/alexhamidi/diffuser"
   },
   {
