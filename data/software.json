@@ -1,28 +1,18 @@
 [
   {
-    "title": "Browser Challenge Agent",
-    "description": "DOM-based browser automation agent that solves 30 challenges in under 5 minutes using Gemini 2.5 Flash.",
-    "githubUrl": "https://github.com/alexhamidi/browser-challenge-agent"
+    "title": "Audify",
+    "description": "iOS app to convert PDF books to high-quality audio using Google TTS and Exa Search.",
+    "githubUrl": "https://github.com/alexhamidi/Audify"
   },
   {
-    "title": "UCSD Transcript",
-    "description": "Extracts transcripts from UCSD lecture videos for AI chat and studying.",
-    "githubUrl": "https://github.com/alexhamidi/ucsd-transcript"
+    "title": "Graphit",
+    "description": "Interactive graph editor built from scratch. if you can think it, you can graphit.",
+    "githubUrl": "https://github.com/alexhamidi/graphit"
   },
   {
-    "title": "SiteScroll",
-    "description": "Random website discovery tool. Personal sites are wonderful fragments of someone's identity but not easily discoverable.",
-    "githubUrl": "https://github.com/alexhamidi/sitescroll"
-  },
-  {
-    "title": "X Bookmarks Chat",
-    "description": "AI-powered chat interface for your X/Twitter bookmarks.",
-    "githubUrl": "https://github.com/alexhamidi/xbookmarks"
-  },
-  {
-    "title": "Noise Tetris",
-    "description": "Tetris but the blocks have visual noise.",
-    "githubUrl": "https://github.com/alexhamidi/noise-tetris"
+    "title": "Umari",
+    "description": "The fastest web agent in the world.",
+    "githubUrl": "https://github.com/alexhamidi/umari"
   },
   {
     "title": "Samantha",
@@ -30,33 +20,13 @@
     "githubUrl": "https://github.com/alexhamidi/samantha"
   },
   {
-    "title": "Mouse Pedal",
-    "description": "Computer mouse → sustain pedal :)",
-    "githubUrl": "https://github.com/alexhamidi/mouse-pedal"
+    "title": "Deducer",
+    "description": "Reasoning from first principles by grounding terms in authoritative definitions and deriving conclusions through formal logic.",
+    "githubUrl": "https://github.com/alexhamidi/deducer-convos"
   },
   {
-    "title": "Web RL",
-    "description": "Web-based reinforcement learning experiments.",
-    "githubUrl": "https://github.com/alexhamidi/web-rl"
-  },
-  {
-    "title": "Typing Tracker",
-    "description": "Swift app for tracking typing metrics.",
-    "githubUrl": "https://github.com/alexhamidi/typing-tracker"
-  },
-  {
-    "title": "Engineering Project",
-    "description": "Vibrating alarm clock in Adafruit Circuit Playground Express.",
-    "githubUrl": "https://github.com/alexhamidi/eng-10-proj"
-  },
-  {
-    "title": "Graphit",
-    "description": "Turns natural language into interactive charts and diagrams.",
-    "githubUrl": "https://github.com/alexhamidi/graphit"
-  },
-  {
-    "title": "GMA",
-    "description": "Voice AI assistant using OpenAI's Realtime API with native iOS and React Native implementations.",
-    "githubUrl": "https://github.com/alexhamidi/gma"
+    "title": "Browser Challenge Agent",
+    "description": "DOM-based browser automation agent that solves 30 complex challenges in under 5 minutes using Gemini 2.5 Flash.",
+    "githubUrl": "https://github.com/alexhamidi/browser-challenge-agent"
   }
 ]
