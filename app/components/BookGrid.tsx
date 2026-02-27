@@ -71,10 +71,10 @@ export default function BookGrid({ books }: { books: Book3D[] }) {
   const isClosing = modal.phase === "closing";
   const isVisible = modal.phase !== "closed";
 
-  const handleClick = (index: number, e: React.MouseEvent) => {
-    const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
-    open(rect, index);
-  };
+  // const handleClick = (index: number, e: React.MouseEvent) => {
+  //   const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+  //   open(rect, index);
+  // };
 
   // Listen for sidebar open requests
   useEffect(() => {
@@ -84,7 +84,7 @@ export default function BookGrid({ books }: { books: Book3D[] }) {
       if (index === -1) return;
       const el = bookRefs.current.get(index);
       if (!el) return;
-      open(el.getBoundingClientRect(), index);
+      // open(el.getBoundingClientRect(), index);
     };
     window.addEventListener("open-modal", handler);
     return () => window.removeEventListener("open-modal", handler);
@@ -148,10 +148,10 @@ export default function BookGrid({ books }: { books: Book3D[] }) {
 
       <div className="grid grid-cols-4 gap-x-6 gap-y-8 -ml-6">
         {books.map((book, i) => (
-          <button
+          <div
             key={book.title}
-            ref={(el) => { if (el) bookRefs.current.set(i, el); }}
-            onClick={(e) => handleClick(i, e)}
+            ref={(el) => { if (el) bookRefs.current.set(i, el as any); }}
+            // onClick={(e) => handleClick(i, e)}
             style={{
               display: "flex",
               flexDirection: "row",
@@ -166,7 +166,7 @@ export default function BookGrid({ books }: { books: Book3D[] }) {
               background: "none",
               border: "none",
               padding: 0,
-              cursor: "pointer",
+              cursor: "default",
             }}
           >
             {/* SPINE - exact adammaj open state */}
@@ -271,11 +271,11 @@ export default function BookGrid({ books }: { books: Book3D[] }) {
                 loading="lazy"
               />
             </div>
-          </button>
+          </div>
         ))}
       </div>
 
-      {isVisible && (
+      {/* {isVisible && (
         <>
           <div
             className="fixed inset-0 z-50"
@@ -367,7 +367,7 @@ export default function BookGrid({ books }: { books: Book3D[] }) {
             </div>
           </div>
         </>
-      )}
+      )} */}
     </>
   );
 }

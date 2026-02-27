@@ -9,13 +9,93 @@ import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { oneLight } from "react-syntax-highlighter/dist/esm/styles/prism";
 import { ProjectItem } from "../utils/interfaces"
 
+function ProjectMedia({ project }: { project: ProjectItem }) {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const audioCtxRef = useRef<AudioContext | null>(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+
+  if (!project.video && !project.image) return null;
+
+  const togglePlay = (e: React.MouseEvent) => {
+    if (!videoRef.current) return;
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (isPlaying) {
+      videoRef.current.pause();
+      setIsPlaying(false);
+    } else {
+      if (project.volume && project.volume > 1 && !audioCtxRef.current) {
+        try {
+          const AudioContextClass = (window.AudioContext || (window as any).webkitAudioContext);
+          const ctx = new AudioContextClass();
+          const source = ctx.createMediaElementSource(videoRef.current);
+          const gainNode = ctx.createGain();
+          gainNode.gain.value = project.volume;
+          source.connect(gainNode);
+          gainNode.connect(ctx.destination);
+          audioCtxRef.current = ctx;
+        } catch (e) {
+          console.warn("AudioContext failed", e);
+        }
+      }
+
+      if (audioCtxRef.current?.state === "suspended") {
+        audioCtxRef.current.resume();
+      }
+
+      videoRef.current.play().then(() => setIsPlaying(true)).catch(() => {});
+    }
+  };
+
+  return (
+    <div 
+      className="relative mb-3 w-full aspect-[16/10] overflow-hidden rounded-lg border border-neutral-200 group/media cursor-pointer"
+      onClick={togglePlay}
+    >
+      {project.video ? (
+        <>
+          <video
+            ref={videoRef}
+            src={project.video}
+            className="w-full h-full object-cover"
+            playsInline
+            loop
+            crossOrigin="anonymous"
+          />
+          <div className={`absolute inset-0 flex items-center justify-center bg-black/5 transition-opacity duration-300 ${isPlaying ? 'opacity-0 group-hover/media:opacity-100' : 'opacity-100'}`}>
+            <div className="w-12 h-12 flex items-center justify-center rounded-full bg-white/90 backdrop-blur-sm shadow-sm border border-neutral-200/50 transition-transform duration-200 active:scale-90">
+              {isPlaying ? (
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-black">
+                  <rect x="6" y="4" width="4" height="16" fill="currentColor" />
+                  <rect x="14" y="4" width="4" height="16" fill="currentColor" />
+                </svg>
+              ) : (
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-black ml-0.5">
+                  <polygon points="5 3 19 12 5 21 5 3" fill="currentColor" />
+                </svg>
+              )}
+            </div>
+          </div>
+        </>
+      ) : project.image ? (
+        <img
+          src={project.image}
+          alt={project.title}
+          className="w-full h-full object-cover"
+        />
+      ) : null}
+    </div>
+  );
+}
+
 type ModalState =
   | { phase: "closed" }
   | { phase: "expanding"; project: ProjectItem; startRect: DOMRect }
   | { phase: "open"; project: ProjectItem; startRect: DOMRect }
   | { phase: "closing"; project: ProjectItem; startRect: DOMRect };
 
-export default function ProjectSection({ projects, showDates = false, fullWidth = false, static: isStatic = false }: { projects: ProjectItem[]; showDates?: boolean; fullWidth?: boolean; static?: boolean }) {
+export default function ProjectSection({ projects, showDates = false, fullWidth = false, static: isStatic = false, hideBlogTag = false }: { projects: ProjectItem[]; showDates?: boolean; fullWidth?: boolean; static?: boolean; hideBlogTag?: boolean }) {
   const [modal, setModal] = useState<ModalState>({ phase: "closed" });
   const cardRefs = useRef<Map<string, HTMLButtonElement>>(new Map());
   const modalRef = useRef<HTMLDivElement>(null);
@@ -162,18 +242,15 @@ export default function ProjectSection({ projects, showDates = false, fullWidth 
         {projects.map((project) => {
           const inner = (
             <>
-              {project.image && (
-                <div className="mb-3 w-full aspect-video overflow-hidden rounded-lg border border-neutral-200">
-                  <img
-                    src={project.image}
-                    alt={project.title}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-              )}
+              <ProjectMedia project={project} />
               <div className="flex items-center gap-2 mb-1">
                 <h3 className={`text-sm font-normal text-neutral-700 text-balance ${!isStatic ? "group-hover:text-neutral-800 transition-colors" : ""}`}>
                   {project.title}
+                  {project.blog && !hideBlogTag && (
+                    <span className="ml-2 px-1.5 py-0.5 text-[10px] font-medium bg-neutral-100 text-neutral-500 rounded lowercase transition-colors group-hover:bg-neutral-200 group-hover:text-black">
+                      blog
+                    </span>
+                  )}
                 </h3>
                 {project.badge_path && (
                   <img
@@ -208,8 +285,14 @@ export default function ProjectSection({ projects, showDates = false, fullWidth 
               ref={(el) => {
                 if (el) cardRefs.current.set(project.title, el);
               }}
-              onClick={() => handleOpen(project)}
-              className="group block text-left cursor-pointer hover:text-neutral-900 outline-none"
+              onClick={() => {
+                if (project.blog) {
+                  handleOpen(project);
+                } else {
+                  window.open(project.link, "_blank", "noopener,noreferrer");
+                }
+              }}
+              className="group block text-left cursor-pointer hover:text-neutral-900 outline-none w-full"
               style={{
                 opacity: selectedTitle === project.title && !isClosing ? 0 : 1,
                 transition: "opacity 80ms",

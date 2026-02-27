@@ -176,7 +176,7 @@ export default async function Home() {
 
           <section id="writing" className="scroll-mt-8 mb-16 mt-10">
             <SectionHeader title="writing" />
-            <ProjectSection projects={writing} />
+            <ProjectSection projects={writing} hideBlogTag />
           </section>
 
           <section id="music" className="scroll-mt-8 mb-16 mt-10">

@@ -95,12 +95,12 @@ export default function HeroButtons() {
         >
           {sent ? "Sent!" : "Contact me"}
         </button>
-        <button
+        {/* <button
           onClick={handleLucky}
           className="text-sm px-4 py-2 border border-neutral-300 rounded hover:border-black hover:text-black text-neutral-500 transition-colors cursor-pointer"
         >
           I'm feeling lucky
-        </button>
+        </button> */}
       </div>
 
       {/* Form */}

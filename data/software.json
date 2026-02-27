@@ -10,9 +10,9 @@
     "githubUrl": "https://github.com/alexhamidi/graphit"
   },
   {
-    "title": "Diffuser",
+    "title": "Sonoveo",
     "description": "realtime audio visualization using stable diffusion 1.5 and hubert audio encodings.",
-    "githubUrl": "https://github.com/alexhamidi/diffuser"
+    "githubUrl": "https://github.com/alexhamidi/sonoveo"
   },
   {
     "title": "Umari",

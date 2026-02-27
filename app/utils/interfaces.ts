@@ -14,9 +14,11 @@ export interface ProjectItem {
   description: string;
   date: string;
   link: string;
-  tags: string[];
+  blog?: boolean;
   badge_path?: string;
   image?: string;
+  video?: string;
+  volume?: number;
   slug?: string;
   content?: string;
   mdxSource?: MDXRemoteSerializeResult;
