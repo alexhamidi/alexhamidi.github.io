@@ -1,5 +1,35 @@
 [
   {
+    "title": "Audify",
+    "description": "iOS app to convert PDF books to high-quality audio using Google TTS and Exa Search.",
+    "githubUrl": "https://github.com/alexhamidi/Audify"
+  },
+  {
+    "title": "Graphit",
+    "description": "A graph editor built from scratch. Turns natural language into interactive charts and diagrams instantly.",
+    "githubUrl": "https://github.com/alexhamidi/graphit"
+  },
+  {
+    "title": "Diffuser",
+    "description": "An audio to video diffusion transformer I hacked up myself.",
+    "githubUrl": "https://github.com/alexhamidi/diffuser"
+  },
+  {
+    "title": "Umari",
+    "description": "The fastest web agent in the world. Uses a novel architecture for browser automation that outperforms existing approaches.",
+    "githubUrl": "https://github.com/alexhamidi/umari"
+  },
+  {
+    "title": "Samantha",
+    "description": "A Playwright wrapper for Meta's Segment Anything Model that removes the 29-second limit by chunking and stitching audio.",
+    "githubUrl": "https://github.com/alexhamidi/samantha"
+  },
+  {
+    "title": "Deducer",
+    "description": "Reasoning from first principles. An attempt to ground LLM responses in formal logic and authoritative sources.",
+    "githubUrl": "https://github.com/alexhamidi/deducer-convos"
+  },
+  {
     "title": "Browser Challenge Agent",
     "description": "DOM-based browser automation agent that solves 30 challenges in under 5 minutes using Gemini 2.5 Flash.",
     "githubUrl": "https://github.com/alexhamidi/browser-challenge-agent"
@@ -25,38 +55,8 @@
     "githubUrl": "https://github.com/alexhamidi/noise-tetris"
   },
   {
-    "title": "Samantha",
-    "description": "A Playwright wrapper for Meta's Segment Anything Model that removes the 29-second limit.",
-    "githubUrl": "https://github.com/alexhamidi/samantha"
-  },
-  {
     "title": "Mouse Pedal",
     "description": "Computer mouse → sustain pedal :)",
     "githubUrl": "https://github.com/alexhamidi/mouse-pedal"
-  },
-  {
-    "title": "Web RL",
-    "description": "Web-based reinforcement learning experiments.",
-    "githubUrl": "https://github.com/alexhamidi/web-rl"
-  },
-  {
-    "title": "Typing Tracker",
-    "description": "Swift app for tracking typing metrics.",
-    "githubUrl": "https://github.com/alexhamidi/typing-tracker"
-  },
-  {
-    "title": "Engineering Project",
-    "description": "Vibrating alarm clock in Adafruit Circuit Playground Express.",
-    "githubUrl": "https://github.com/alexhamidi/eng-10-proj"
-  },
-  {
-    "title": "Graphit",
-    "description": "Turns natural language into interactive charts and diagrams.",
-    "githubUrl": "https://github.com/alexhamidi/graphit"
-  },
-  {
-    "title": "GMA",
-    "description": "Voice AI assistant using OpenAI's Realtime API with native iOS and React Native implementations.",
-    "githubUrl": "https://github.com/alexhamidi/gma"
   }
 ]
