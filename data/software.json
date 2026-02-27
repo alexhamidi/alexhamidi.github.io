@@ -11,7 +11,7 @@
   },
   {
     "title": "Diffuser",
-    "description": "A cross-modal Diffusion Transformer (DiT) architecture for high-fidelity audio-to-video synthesis using latent diffusion and temporal attention.",
+    "description": "Maps HuBERT latent representations into CLIP text space using a runtime-fitted whitening transform for Stable Diffusion v1.5 video generation.",
     "githubUrl": "https://github.com/alexhamidi/diffuser"
   },
   {
