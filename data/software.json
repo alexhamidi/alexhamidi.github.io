@@ -11,7 +11,7 @@
   },
   {
     "title": "Diffuser",
-    "description": "Maps HuBERT latent representations into CLIP text space using a runtime-fitted whitening transform for Stable Diffusion v1.5 video generation.",
+    "description": "hubert latents mapped to clip space via whitening transform for stable diffusion v1.5 conditioning with temporal ema smoothing.",
     "githubUrl": "https://github.com/alexhamidi/diffuser"
   },
   {
