@@ -131,7 +131,8 @@ export default async function Home() {
           I&apos;m excited about:
         </p>
         <ul className="mt-2 text-base text-neutral-600 leading-relaxed list-disc pl-5 space-y-1">
-        <li>Improving web/coding agents through RL and scaffolding in order to obviate tedious knowledge work </li>
+        <li>Improving coding agents through RL and scaffolding in order to obviate tedious knowledge work </li>
+        <li>Using LLMs to build search and retrieval systems that operate on internet scale</li>
         <li>Neuroscience, neurotech and BCIs. They combine many of my biggest interests: computation, intelligence, consciousness, and philosophy.</li>
         <li>Latent diffusion models and how DiT scaling, classifier-free guidance, and noise scheduling (among other things) affect output aesthetics in practice.</li>
 
