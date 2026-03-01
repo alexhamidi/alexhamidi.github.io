@@ -41,10 +41,10 @@ export default function SectionNav({ books }: SectionNavProps) {
 
   const sections: NavSection[] = [
     { title: "Home", sectionId: "start" },
-    { title: "Work", sectionId: "work" },
-    { title: "Projects", sectionId: "projects" }, // items: projects },
-    { title: "Writing", sectionId: "writing" },
-    { title: "Music", sectionId: "music" },
+    // { title: "Work", sectionId: "work" },
+    { title: "Posts", sectionId: "posts" },
+    // { title: "Projects", sectionId: "projects" },
+    // { title: "Music", sectionId: "music" },
     { title: "Gallery", sectionId: "gallery" },
     { title: "Reading", sectionId: "reading" }, // items: bookItems },
     // { title: "Wall", sectionId: "wall" },
@@ -113,6 +113,7 @@ export default function SectionNav({ books }: SectionNavProps) {
   }, []);
 
   const socialLinks = [
+    { href: "/wikipedia", label: "Images" },
     { href: "https://twitter.com/ahamidi_", label: "Twitter" },
     { href: "https://github.com/alexhamidi", label: "GitHub" },
     { href: "https://news.ycombinator.com/user?id=alexhamidi", label: "HN" },
@@ -129,7 +130,7 @@ export default function SectionNav({ books }: SectionNavProps) {
           <div key={section.sectionId}>
             <button
               onClick={() => handleClick(section.sectionId)}
-              className={`cursor-pointer  p-3 border-0  tracking-wide text-left transition-all duration-200 w-full ${ // Added w-full here
+              className={`cursor-pointer p-3 border-0 tracking-wide text-left transition-all duration-200 w-full ${
                 isActive ? "opacity-100" : "opacity-40 hover:opacity-70"
               }`}
             >
@@ -178,8 +179,10 @@ export default function SectionNav({ books }: SectionNavProps) {
           <a
             key={link.label}
             href={link.href}
-            target="_blank"
-            rel="noopener noreferrer"
+            {...(link.href.startsWith("http") && {
+              target: "_blank",
+              rel: "noopener noreferrer",
+            })}
             className="text-[13px]  p-3  tracking-wide uppercase no-underline text-neutral-600 font-medium opacity-40 hover:opacity-70 transition-all duration-200 flex items-center gap-1.5"
           >
             {link.label}

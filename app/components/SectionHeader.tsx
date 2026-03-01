@@ -1,6 +1,6 @@
 export default function SectionHeader({ title }: { title: string }) {
   return (
-    <div className="flex items-center gap-4 mb-8">
+    <div className="flex items-center gap-4 mb-4">
       <h2 className="text-lg tracking-tight font-semibold text-neutral-800 text-center whitespace-nowrap">
         {title}
       </h2>

@@ -145,14 +145,16 @@ export default function ProjectSection({ projects, showDates = false, fullWidth 
     }
   }, [modal.phase]);
 
-  // Open modal from URL param on mount
   useEffect(() => {
     const slug = new URLSearchParams(window.location.search).get("o");
     if (!slug) return;
     const project = projects.find((p) => (p.slug ?? p.title) === slug);
     if (!project) return;
-    // Wait for refs to be populated
-    requestAnimationFrame(() => handleOpen(project));
+    if (project.blog && project.slug) {
+      window.location.href = `/writing/${project.slug}`;
+    } else {
+      requestAnimationFrame(() => handleOpen(project));
+    }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -286,8 +288,8 @@ export default function ProjectSection({ projects, showDates = false, fullWidth 
                 if (el) cardRefs.current.set(project.title, el);
               }}
               onClick={() => {
-                if (project.blog) {
-                  handleOpen(project);
+                if (project.blog && project.slug) {
+                  window.open(`/writing/${project.slug}`, "_blank", "noopener,noreferrer");
                 } else {
                   window.open(project.link, "_blank", "noopener,noreferrer");
                 }

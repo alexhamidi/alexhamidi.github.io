@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 // import { addPostIt } from "./PostItWall";
 
-const sections = ["work", "projects", "writing", "music", "gallery", "reading"];
+const sections = ["posts", "gallery", "reading"];
 
 export default function HeroButtons() {
   const [open, setOpen] = useState(false);
@@ -84,7 +84,7 @@ export default function HeroButtons() {
           transition: "opacity 200ms cubic-bezier(0.33,0,0.2,1), transform 200ms cubic-bezier(0.33,0,0.2,1)",
         }}
       >
-        <button
+        {/* <button
           ref={contactBtnRef}
           onClick={handleContact}
           className={`text-sm px-4 py-2 border rounded transition-colors cursor-pointer ${
@@ -94,7 +94,7 @@ export default function HeroButtons() {
           }`}
         >
           {sent ? "Sent!" : "Contact me"}
-        </button>
+        </button> */}
         {/* <button
           onClick={handleLucky}
           className="text-sm px-4 py-2 border border-neutral-300 rounded hover:border-black hover:text-black text-neutral-500 transition-colors cursor-pointer"

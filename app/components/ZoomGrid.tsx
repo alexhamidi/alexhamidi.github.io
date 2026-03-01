@@ -15,6 +15,7 @@ type ZoomGridProps<T> = {
   renderExpanded: (item: T, index: number) => ReactNode;
   gridClassName?: string;
   cardClassName?: string;
+  clickable?: boolean;
 };
 
 export default function ZoomGrid<T>({
@@ -24,6 +25,7 @@ export default function ZoomGrid<T>({
   renderExpanded,
   gridClassName = "grid grid-cols-2 md:grid-cols-3 gap-3",
   cardClassName = "",
+  clickable = true,
 }: ZoomGridProps<T>) {
   const [modal, setModal] = useState<ModalState>({ phase: "closed" });
   const cardRefs = useRef<Map<number, HTMLButtonElement>>(new Map());
@@ -139,25 +141,31 @@ export default function ZoomGrid<T>({
   return (
     <>
       <div className={gridClassName}>
-        {items.map((item, index) => (
-          <button
-            key={keyFn(item, index)}
-            ref={(el) => {
-              if (el) cardRefs.current.set(index, el);
-            }}
-            onClick={() => handleOpen(index)}
-            className={`group block text-left cursor-pointer ${cardClassName}`}
-            style={{
-              opacity: selectedIndex === index && !isClosing ? 0 : 1,
-              transition: "opacity 80ms",
-            }}
-          >
-            {renderCard(item, index)}
-          </button>
-        ))}
+        {items.map((item, index) =>
+          clickable ? (
+            <button
+              key={keyFn(item, index)}
+              ref={(el) => {
+                if (el) cardRefs.current.set(index, el);
+              }}
+              onClick={() => handleOpen(index)}
+              className={`group block text-left cursor-pointer ${cardClassName}`}
+              style={{
+                opacity: selectedIndex === index && !isClosing ? 0 : 1,
+                transition: "opacity 80ms",
+              }}
+            >
+              {renderCard(item, index)}
+            </button>
+          ) : (
+            <div key={keyFn(item, index)} className={`block ${cardClassName}`}>
+              {renderCard(item, index)}
+            </div>
+          )
+        )}
       </div>
 
-      {isVisible && (
+      {clickable && isVisible && (
         <>
           <div
             className="fixed inset-0 z-50"

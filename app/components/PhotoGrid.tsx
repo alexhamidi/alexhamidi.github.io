@@ -14,6 +14,7 @@ export default function PhotoGrid({
     <ZoomGrid
       items={urls}
       keyFn={(url) => url}
+      clickable={false}
       gridClassName="columns-2 md:columns-3 gap-3 space-y-3"
       cardClassName="w-full break-inside-avoid"
       renderCard={(url) => {

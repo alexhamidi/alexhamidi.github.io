@@ -15,6 +15,8 @@ export interface ProjectItem {
   date: string;
   link: string;
   blog?: boolean;
+  order?: number;
+  featured?: boolean;
   badge_path?: string;
   image?: string;
   video?: string;
