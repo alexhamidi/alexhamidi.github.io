@@ -1,4 +1,3 @@
-import Link from "next/link";
 import fs from "fs";
 import path from "path";
 
@@ -11,18 +10,6 @@ export default function WikipediaPage() {
 
   return (
     <div className="min-h-screen bg-neutral-950">
-      <div className="sticky top-0 z-10 flex items-center justify-between px-4 py-3 bg-neutral-950/90 backdrop-blur-sm border-b border-neutral-800">
-        <Link
-          href="/"
-          className="text-[12px] text-neutral-500 hover:text-white transition-colors"
-        >
-          ← back
-        </Link>
-        <span className="text-[11px] text-neutral-600 uppercase tracking-widest">
-          wikipics
-        </span>
-      </div>
-
       <div className="flex flex-col items-center gap-1 py-4 px-2 max-w-2xl mx-auto">
         {imageUrls.map((url, i) => (
           <div key={i} className="w-full">

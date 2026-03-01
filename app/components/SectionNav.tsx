@@ -113,13 +113,13 @@ export default function SectionNav({ books }: SectionNavProps) {
   }, []);
 
   const socialLinks = [
-    { href: "/wikipedia", label: "Images" },
     { href: "https://twitter.com/ahamidi_", label: "Twitter" },
     { href: "https://github.com/alexhamidi", label: "GitHub" },
     { href: "https://news.ycombinator.com/user?id=alexhamidi", label: "HN" },
     { href: "https://open.spotify.com/user/alexhamidi", label: "Spotify" },
     { href: "https://letterboxd.com/alexhamidi", label: "Letterboxd" },
     { href: "https://www.midjourney.com/@ahamidi?tab=archive", label: "Midjourney" },
+    { href: "/wikipedia", label: "Images" },
   ];
 
   return (
@@ -179,7 +179,7 @@ export default function SectionNav({ books }: SectionNavProps) {
           <a
             key={link.label}
             href={link.href}
-            {...(link.href.startsWith("http") && {
+            {...((link.href.startsWith("http") || link.href === "/wikipedia") && {
               target: "_blank",
               rel: "noopener noreferrer",
             })}
