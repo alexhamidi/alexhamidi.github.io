@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { ProjectItem } from "../utils/interfaces";
 
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
@@ -25,8 +26,9 @@ export default function WritingList({
     <ul className="divide-y divide-neutral-200">
       {sorted.map((post) => (
         <li key={post.slug}>
-          <a
+          <Link
             href={`/writing/${post.slug}`}
+            prefetch={true}
             className="flex items-baseline justify-between gap-6 py-4 text-left no-underline group"
           >
             <span className="text-[17px] font-normal leading-snug text-neutral-800 group-hover:text-neutral-900 transition-colors truncate min-w-0 flex-1">
@@ -36,7 +38,7 @@ export default function WritingList({
             <span className="text-[13px] text-neutral-500 flex-shrink-0 tabular-nums tracking-wide uppercase">
               {formatDate(post.date)}
             </span>
-          </a>
+          </Link>
         </li>
       ))}
     </ul>

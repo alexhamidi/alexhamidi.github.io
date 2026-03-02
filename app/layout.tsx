@@ -1,16 +1,19 @@
 import type { Metadata } from "next";
 import { JetBrains_Mono, Lora } from "next/font/google";
 import "./globals.css";
-import "katex/dist/katex.min.css";
 
 const mono = JetBrains_Mono({
-  variable: "-- ",
+  variable: "--font-mono",
   subsets: ["latin"],
+  display: "swap",
+  preload: true,
 });
 
 const lora = Lora({
   variable: "--font-serif",
   subsets: ["latin"],
+  display: "swap",
+  preload: true,
 });
 
 export const metadata: Metadata = {

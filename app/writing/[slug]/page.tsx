@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import "katex/dist/katex.min.css";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import remarkMath from "remark-math";
@@ -38,6 +39,7 @@ export default async function WritingPage({
     <div className="w-full max-w-2xl mx-auto px-8 md:px-16 pt-12 pb-16">
       <Link
         href="/#posts"
+        prefetch={true}
         className="text-[12px] text-neutral-400 no-underline hover:text-black transition-colors mb-6 inline-block"
       >
         ← back

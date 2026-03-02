@@ -11,6 +11,16 @@ const nextConfig: NextConfig = {
         hostname: "cdn.midjourney.com",
       },
     ],
+    formats: ["image/avif", "image/webp"],
+  },
+  experimental: {
+    optimizePackageImports: [
+      "react-markdown",
+      "remark-gfm",
+      "remark-math",
+      "rehype-katex",
+      "react-syntax-highlighter",
+    ],
   },
 };
 
