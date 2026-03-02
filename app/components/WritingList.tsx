@@ -8,11 +8,8 @@ function formatDate(dateStr: string): string {
   const parts = dateStr.split("-").map((p) => parseInt(p, 10));
   const year = parts[0];
   if (isNaN(year)) return "";
-  if (parts.length === 1) return String(year);
-  const month = parts[1];
-  if (parts.length === 2) return `${MONTHS[Math.max(0, month - 1)]} ${year}`;
-  const day = parts[2];
-  return `${MONTHS[Math.max(0, month - 1)]} ${day}, ${year}`;
+  const month = parts[1] ?? 1;
+  return `${MONTHS[Math.max(0, month - 1)]} ${year}`;
 }
 
 export default function WritingList({

@@ -55,8 +55,8 @@ export default async function Home() {
           Alex Hamidi
         </h1>
         <p className="mt-4 text-base text-neutral-600 leading-relaxed">
-        I’m a software engineer living in San Francisco. Previously I was at South Park Commons and Figma, and graduated from UC Berkeley in 2019. This is my blog where I post about things I’m interested in, mostly tech-related.
-</p>
+        I’m a software engineer living in San Diego. Previously I worked on 7TB search infrastructure at Clado and SRE at Amazon. This is my blog where I post about things I’m interested in, mostly related to agents
+        </p>
 {/*
 <p className="mt-5 text-base text-neutral-600 leading-relaxed">
   I try to reason{" "}

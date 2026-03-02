@@ -10,6 +10,17 @@ import { oneLight } from "react-syntax-highlighter/dist/esm/styles/prism";
 import { getData } from "../../utils/getData";
 import { ProjectItem } from "../../utils/interfaces";
 
+const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+function formatDate(dateStr: string): string {
+  if (!dateStr) return "";
+  const parts = dateStr.split("-").map((p) => parseInt(p, 10));
+  if (isNaN(parts[0])) return "";
+  const month = parts[1] ?? 1;
+  const year = parts[0];
+  return `${MONTHS[Math.max(0, month - 1)]} ${year}`;
+}
+
 async function getAllBlogPosts(): Promise<(ProjectItem & { slug: string })[]> {
   const [writing, projects] = await Promise.all([
     getData<ProjectItem>("writing"),
@@ -36,7 +47,7 @@ export default async function WritingPage({
   if (!post) notFound();
 
   return (
-    <div className="w-full max-w-2xl mx-auto px-8 md:px-16 pt-12 pb-16">
+    <div className="w-full max-w-4xl mx-auto px-8 md:px-16 pt-12 pb-16">
       <Link
         href="/#posts"
         prefetch={true}
@@ -48,10 +59,10 @@ export default async function WritingPage({
         <h1 className="text-2xl font-bold tracking-tight text-black">
           {post.title}
         </h1>
-        <span className="text-[11px] text-neutral-300">{post.date}</span>
+        <span className="text-[11px] text-neutral-300">{formatDate(post.date)}</span>
       </div>
       {post.content ? (
-        <div className="prose prose-neutral max-w-2xl mt-4">
+        <div className="prose prose-neutral max-w-4xl mt-4">
           <ReactMarkdown
             remarkPlugins={[remarkGfm, remarkMath]}
             rehypePlugins={[rehypeKatex]}
