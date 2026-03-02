@@ -27,8 +27,6 @@ export default function WritingList({
         <li key={post.slug}>
           <a
             href={`/writing/${post.slug}`}
-            target="_blank"
-            rel="noopener noreferrer"
             className="flex items-baseline justify-between gap-6 py-4 text-left no-underline group"
           >
             <span className="text-[17px] font-normal leading-snug text-neutral-800 group-hover:text-neutral-900 transition-colors truncate min-w-0 flex-1">

@@ -49,7 +49,7 @@ function ProjectMedia({ project }: { project: ProjectItem }) {
   };
 
   return (
-    <div 
+    <div
       className="relative mb-3 w-full aspect-[16/10] overflow-hidden rounded-lg border border-neutral-200 group/media cursor-pointer"
       onClick={togglePlay}
     >

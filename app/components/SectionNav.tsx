@@ -119,7 +119,7 @@ export default function SectionNav({ books }: SectionNavProps) {
     { href: "https://open.spotify.com/user/alexhamidi", label: "Spotify" },
     { href: "https://letterboxd.com/alexhamidi", label: "Letterboxd" },
     { href: "https://www.midjourney.com/@ahamidi?tab=archive", label: "Midjourney" },
-    { href: "/wikipedia", label: "Images" },
+    { href: "/images", label: "Images" },
   ];
 
   return (
@@ -179,7 +179,7 @@ export default function SectionNav({ books }: SectionNavProps) {
           <a
             key={link.label}
             href={link.href}
-            {...((link.href.startsWith("http") || link.href === "/wikipedia") && {
+            {...((link.href.startsWith("http") || link.href === "/images") && {
               target: "_blank",
               rel: "noopener noreferrer",
             })}
