@@ -38,7 +38,7 @@ export async function getData<T>(type: string): Promise<MDXItem<T>[]> {
 
       return {
         ...(data as T),
-        slug: file.replace(/\.mdx$/, ""),
+        slug: (data as { slug?: string }).slug ?? file.replace(/\.mdx$/, ""),
         mdxSource,
         content: content.trim(),
         order: data.order ?? 999,

@@ -24,7 +24,7 @@ export default function WritingList({
       {sorted.map((post) => (
         <li key={post.slug}>
           <Link
-            href={`/writing/${post.slug}`}
+            href={`/w/${post.slug}`}
             prefetch={true}
             className="flex items-baseline justify-between gap-6 py-4 text-left no-underline group"
           >

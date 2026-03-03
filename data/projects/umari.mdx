@@ -8,7 +8,7 @@ order: 3
 image: "/projects/umari.png"
 ---
 
-I've been building Umari, a web agent that lets you control your browser through natural language. The pitch is simple: type what you want done, and it figures out the clicks and keystrokes. But making it fast enough to actually feel useful - not like you're waiting on a slow RPC call - turned into a surprisingly deep engineering problem. This post is about how it works, the inference math behind the cost and latency tradeoffs, and what I learned along the way.
+Umari is a web agent that controls your browser through natural language. Making umari fast enough to actually feel useful is a surprisingly deep engineering problem. This post is about how it works and the cost and latency tradeoffs I made
 
 Umari runs as a lightweight overlay where you describe tasks in plain English. It takes screenshots to perceive the current state, uses a reasoning model to plan what to do next, then executes. A simple instruction like "find me flights from SF to NYC under $300" decomposes into a sequence of clicks, form fills, and scrolls - all handled autonomously. The goal is to make browsers self-driving. This post is about how we get there.
 
@@ -60,7 +60,7 @@ For training data, we generated trajectories through augmentation on human demon
 
 One surprising failure mode we found: the model was significantly worse at clicking large, high-contrast elements (bright red buttons, prominent CTAs) than at clicking small, subtle ones. Our hypothesis is a distribution bias - large elements have more pixels near their center, so the model learned to click center-of-mass for large targets, which often overshoots the actual interactive region if the button has thick borders or padding. More investigation needed, but it's a good reminder that RL reward shaping can produce unexpected failure modes that are hard to catch without systematic evaluation.
 
-## Adaptive routing: making it feel instant
+## Adaptive routing
 
 Test-time compute scaling gets a lot of hype right now, especially following the success of o-series models. But for web agents, the bottleneck isn't reasoning - it's grounding. For most steps, a 7B vision model is more than enough. The question is when to escalate to the expensive reasoning model.
 
@@ -76,14 +76,6 @@ When GPT-5 is invoked, we pipeline it: step N executes while the planner prepare
 Simple UIs (~70% of tasks) resolve in under 100ms. Complex UIs - spreadsheets, forms with conditional logic, multi-step flows - take 400–600ms but produce higher accuracy. Same two models, different routing based on confidence signals. The fundamental tradeoff maps well to different users: consumers want individual tasks done fast, enterprises want long workflows done reliably.
 
 After about an hour of use on a given workflow, patch cache hit rates climb high enough that many steps complete in under 100ms end-to-end. Verification is cheap - a single screenshot plus a state predicate - so we can iterate quickly without accumulating silent drift.
-
-## What's next
-
-**Streaming.** The current architecture is a step-by-step screenshot loop. The natural evolution is a streaming capture pipeline running at 20–30fps, emitting actions at 5–10Hz. This closes the perception-action loop properly and makes drag, hover, and scroll feel natural rather than mechanical. The planner hooks into the same stream but only activates on escalations, keeping it off the critical path.
-
-**Micro-policies.** Frequently repeated workflows - daily RPA tasks, recurring data entry - get compiled into local policies that run without calling the planner at all. After a workflow runs successfully a few times, the reasoning model distills its plans into the grounding model through fine-tuning, so more steps stay on the fast path. The planner becomes a background teacher rather than a runtime dependency.
-
-**End-to-end.** The long-term goal is to eliminate the explicit planner-grounding split entirely and go directly from screenshots to mouse/keyboard actions with a single model. This is the same architectural shift Tesla made with FSD: from a rules-based stack with explicit intermediate representations to cameras-to-steering end-to-end. The brittle policies and hand-crafted routing logic go away; the model learns to allocate its own compute based on task complexity. We're not there yet - keeping a planner in the loop for edge cases and safety is the right call right now - but as the executor absorbs more patterns through streaming and distillation, the stack will simplify.
 
 ## Related work
 

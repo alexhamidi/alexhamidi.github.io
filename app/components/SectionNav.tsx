@@ -47,7 +47,7 @@ export default function SectionNav({ books }: SectionNavProps) {
     // { title: "Music", sectionId: "music" },
     { title: "Gallery", sectionId: "gallery" },
     { title: "Reading", sectionId: "reading" }, // items: bookItems },
-    // { title: "Wall", sectionId: "wall" },
+    { title: "Ideas", sectionId: "ideas" },
   ];
 
   const handleClick = useCallback((sectionId: string) => {
@@ -81,25 +81,36 @@ export default function SectionNav({ books }: SectionNavProps) {
 
     if (els.length === 0) return;
 
+    let tickId: ReturnType<typeof setTimeout> | null = null;
+    let pendingEntries: IntersectionObserverEntry[] = [];
+    const TICK_MS = 150;
+
+    const process = () => {
+      tickId = null;
+      if (isClickScrolling.current || pendingEntries.length === 0) return;
+      const toProcess = pendingEntries;
+      pendingEntries = [];
+      const candidates: { id: string; top: number }[] = [];
+      for (const entry of toProcess) {
+        if (entry.isIntersecting) {
+          candidates.push({
+            id: entry.target.id,
+            top: entry.boundingClientRect.top,
+          });
+        }
+      }
+      if (candidates.length > 0) {
+        candidates.sort((a, b) => a.top - b.top);
+        setActiveSection((prev) => (prev === candidates[0].id ? prev : candidates[0].id));
+      }
+    };
+
     const observer = new IntersectionObserver(
       (entries) => {
         if (isClickScrolling.current) return;
-
-        // Find section whose top is closest to (but below) top of viewport
-        const candidates: { id: string; top: number }[] = [];
-        for (const entry of entries) {
-          if (entry.isIntersecting) {
-            candidates.push({
-              id: entry.target.id,
-              top: entry.boundingClientRect.top,
-            });
-          }
-        }
-
-        if (candidates.length > 0) {
-          candidates.sort((a, b) => a.top - b.top);
-          setActiveSection(candidates[0].id);
-        }
+        pendingEntries.push(...entries);
+        if (tickId !== null) return;
+        tickId = setTimeout(process, TICK_MS);
       },
       { rootMargin: "0px 0px -75% 0px", threshold: 0 },
     );
@@ -107,6 +118,7 @@ export default function SectionNav({ books }: SectionNavProps) {
     els.forEach((el) => observer.observe(el));
     return () => {
       observer.disconnect();
+      if (tickId !== null) clearTimeout(tickId);
       if (clickTimeout.current) clearTimeout(clickTimeout.current);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps

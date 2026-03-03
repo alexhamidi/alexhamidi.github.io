@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 // import { addPostIt } from "./PostItWall";
 
-const sections = ["posts", "gallery", "reading"];
+const sections = ["posts", "gallery", "reading", "ideas"];
 
 export default function HeroButtons() {
   const [open, setOpen] = useState(false);
@@ -71,7 +71,7 @@ export default function HeroButtons() {
   };
 
   return (
-    <div className="mt-2 relative" style={{ height: open ? 82 : 40, transition: "height 200ms cubic-bezier(0.33,0,0.2,1)" }}>
+    <div className="mt-2C relative" style={{ height: open ? 82 : 40, transition: "height 200ms cubic-bezier(0.33,0,0.2,1)" }}>
       {/* Buttons */}
       <div
         className="flex gap-3 absolute inset-0"

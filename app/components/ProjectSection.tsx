@@ -151,7 +151,7 @@ export default function ProjectSection({ projects, showDates = false, fullWidth 
     const project = projects.find((p) => (p.slug ?? p.title) === slug);
     if (!project) return;
     if (project.blog && project.slug) {
-      window.location.href = `/writing/${project.slug}`;
+      window.location.href = `/w/${project.slug}`;
     } else {
       requestAnimationFrame(() => handleOpen(project));
     }
@@ -289,7 +289,7 @@ export default function ProjectSection({ projects, showDates = false, fullWidth 
               }}
               onClick={() => {
                 if (project.blog && project.slug) {
-                  window.open(`/writing/${project.slug}`, "_blank", "noopener,noreferrer");
+                  window.open(`/w/${project.slug}`, "_blank", "noopener,noreferrer");
                 } else {
                   window.open(project.link, "_blank", "noopener,noreferrer");
                 }

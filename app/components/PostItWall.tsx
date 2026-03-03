@@ -25,6 +25,28 @@ type PostIt = {
 const STORAGE_KEY = "postit-wall";
 const EVENT_NAME = "postit-added";
 
+const DEFAULT_TEXTS = [
+  "Becoming clear that CLI is the best interface for agents... Every developer-related product (and eventually every product) needs to have a comprehensive CLI. Modal does this exceptionally",
+  "Personal software that sits on all your devices, recording location & audio, and creates a map of your life/diary",
+  "Generative world models for anywhere (promptable reality/street view)",
+  "Some better way of doomscrolling... maybe articles? wikipedia? Sometimes have the impulse to scroll but would much rather be doing something educational, but there is a lack of options",
+  "Evolution is just the accumulation of mutation. Build something to track/simulate this process",
+  "Science fiction where we are the ai getting prompted",
+  "General agent for web scraping. In theory could populate everything from sitescroll in 5 prompts. Simple would just be tools to control browser + check all requests and responses inside a coding environment",
+];
+
+function getDefaultNotes(): PostIt[] {
+  const positions = [[10, 5], [55, 15], [5, 55], [50, 50], [75, 35], [30, 70], [20, 30]];
+  return DEFAULT_TEXTS.map((text, i) => ({
+    text,
+    color: COLORS[i % COLORS.length],
+    rotation: (i - 2) * 4,
+    x: positions[i][0],
+    y: positions[i][1],
+    timestamp: 1000000000000 + i,
+  }));
+}
+
 export function addPostIt(text: string) {
   const existing: PostIt[] = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
   const note: PostIt = {
@@ -49,7 +71,9 @@ function DraggableNote({ note, index, onMove }: { note: PostIt; index: number; o
     if (!ref.current) return;
     dragging.current = true;
     const rect = ref.current.getBoundingClientRect();
-    offset.current = { x: e.clientX - rect.left, y: e.clientY - rect.top };
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+    offset.current = { x: e.clientX - centerX, y: e.clientY - centerY };
     ref.current.setPointerCapture(e.pointerId);
     ref.current.style.zIndex = "10";
     ref.current.style.cursor = "grabbing";
@@ -60,8 +84,14 @@ function DraggableNote({ note, index, onMove }: { note: PostIt; index: number; o
     const parent = ref.current.parentElement;
     if (!parent) return;
     const parentRect = parent.getBoundingClientRect();
-    const x = ((e.clientX - offset.current.x - parentRect.left) / parentRect.width) * 100;
-    const y = ((e.clientY - offset.current.y - parentRect.top) / parentRect.height) * 100;
+    const centerX = e.clientX - offset.current.x;
+    const centerY = e.clientY - offset.current.y;
+    const w = ref.current.offsetWidth;
+    const h = ref.current.offsetHeight;
+    const leftViewport = centerX - w / 2;
+    const topViewport = centerY - h / 2;
+    const x = ((leftViewport - parentRect.left) / parentRect.width) * 100;
+    const y = ((topViewport - parentRect.top) / parentRect.height) * 100;
     ref.current.style.left = `${x}%`;
     ref.current.style.top = `${y}%`;
   };
@@ -71,12 +101,10 @@ function DraggableNote({ note, index, onMove }: { note: PostIt; index: number; o
     dragging.current = false;
     ref.current.style.zIndex = "1";
     ref.current.style.cursor = "grab";
-    const parent = ref.current.parentElement;
-    if (!parent) return;
-    const parentRect = parent.getBoundingClientRect();
-    const rect = ref.current.getBoundingClientRect();
-    const x = ((rect.left - parentRect.left) / parentRect.width) * 100;
-    const y = ((rect.top - parentRect.top) / parentRect.height) * 100;
+    const leftStr = ref.current.style.left;
+    const topStr = ref.current.style.top;
+    const x = parseFloat(leftStr) || 0;
+    const y = parseFloat(topStr) || 0;
     onMove(index, x, y);
     ref.current.releasePointerCapture(e.pointerId);
   };
@@ -93,7 +121,8 @@ function DraggableNote({ note, index, onMove }: { note: PostIt; index: number; o
         top: `${note.y}%`,
         backgroundColor: note.color,
         transform: `rotate(${note.rotation}deg)`,
-        width: "clamp(100px, 15%, 160px)",
+        width: "clamp(100px, 12vw, 180px)",
+        aspectRatio: "1",
         padding: "12px 14px",
         cursor: "grab",
         zIndex: 1,
@@ -110,8 +139,16 @@ export default function PostItWall() {
   const [notes, setNotes] = useState<PostIt[]>([]);
 
   const load = useCallback(() => {
+    if (typeof window === "undefined") return;
     const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored) setNotes(JSON.parse(stored));
+    const parsed = stored ? JSON.parse(stored) : [];
+    if (Array.isArray(parsed) && parsed.length > 0) {
+      setNotes(parsed);
+    } else {
+      const defaults = getDefaultNotes();
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(defaults));
+      setNotes(defaults);
+    }
   }, []);
 
   useEffect(() => {

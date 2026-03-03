@@ -10,6 +10,18 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "cdn.midjourney.com",
       },
+      {
+        protocol: "https",
+        hostname: "en.wikipedia.org",
+      },
+      {
+        protocol: "https",
+        hostname: "commons.wikimedia.org",
+      },
+      {
+        protocol: "https",
+        hostname: "upload.wikimedia.org",
+      },
     ],
     formats: ["image/avif", "image/webp"],
   },

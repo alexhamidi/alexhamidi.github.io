@@ -37,6 +37,12 @@
   }
 }
 
+/* Native scroll: instant, no smoothing; scroll anchoring for stability */
+html {
+  scroll-behavior: auto;
+  overflow-anchor: auto;
+}
+
 /* Hide scrollbar */
 html,
 body {

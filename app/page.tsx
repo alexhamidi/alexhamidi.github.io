@@ -1,11 +1,14 @@
+import fs from "fs";
+import path from "path";
 import SectionNav from "./components/SectionNav";
 import SectionHeader from "./components/SectionHeader";
 import ProjectSection from "./components/ProjectSection";
 import WritingList from "./components/WritingList";
 import MusicSection from "./components/MusicSection";
 import BookGrid from "./components/BookGrid";
-import PhotoGrid from "./components/PhotoGrid";
-// import PostItWall from "./components/PostItWall";
+import GallerySection from "./components/GallerySection";
+import PostItWall from "./components/PostItWall";
+import ContactForm from "./components/ContactForm";
 import ScrollRestore from "./components/ScrollRestore";
 import HeroButtons from "./components/HeroButtons";
 import { getData } from "./utils/getData";
@@ -42,6 +45,15 @@ export default async function Home() {
     ...writing,
     ...projects.filter((p) => p.blog),
   ];
+  let wikipediaUrls: string[] = [];
+  try {
+    const raw = fs.readFileSync(path.join(process.cwd(), "data", "wikipics.json"), "utf-8");
+    const all = JSON.parse(raw) as string[];
+    const shuffled = [...all].sort(() => Math.random() - 0.5);
+    wikipediaUrls = shuffled.slice(0, photos.length);
+  } catch {
+    // no wikipics
+  }
 
   return (
     <div className="w-full">
@@ -55,7 +67,7 @@ export default async function Home() {
           Alex Hamidi
         </h1>
         <p className="mt-4 text-base text-neutral-600 leading-relaxed">
-        I’m a software engineer living in San Diego. Previously I worked on 7TB search infrastructure at Clado and SRE at Amazon. This is my blog where I post about things I’m interested in, mostly related to agents
+        I’m a software engineer living in San Diego. Previously I worked on 7TB search infrastructure at Clado and automations at Amazon. This is my blog where I post about things I’m interested in, mostly related to tech and llms
         </p>
 {/*
 <p className="mt-5 text-base text-neutral-600 leading-relaxed">
@@ -138,8 +150,7 @@ export default async function Home() {
 
           <section id="gallery" className="scroll-mt-8 mb-16 mt-10">
             <SectionHeader title="gallery" />
-            {/* <PhotoGrid urls={photos} /> */}
-            <PhotoGrid urls={[...photos]} />
+            <GallerySection photoUrls={[...photos]} wikipediaUrls={wikipediaUrls} />
           </section>
 
           <section id="reading" className="scroll-mt-8 mb-16 mt-10">
@@ -147,13 +158,13 @@ export default async function Home() {
             <BookGrid books={books} />
           </section>
 
-          {/* <section id="wall" className="scroll-mt-8 mb-16 mt-10">
-            <SectionHeader title="wall" />
+          <section id="ideas" className="scroll-mt-8 mb-16 mt-10">
+            <SectionHeader title="ideas" />
             <PostItWall />
             <div className="mt-6">
               <ContactForm />
             </div>
-          </section> */}
+          </section>
         </div>
       </div>
 

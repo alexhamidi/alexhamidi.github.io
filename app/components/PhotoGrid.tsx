@@ -6,9 +6,11 @@ import ZoomGrid from "./ZoomGrid";
 export default function PhotoGrid({
   urls,
   prefix,
+  unoptimized,
 }: {
   urls: string[];
   prefix?: string;
+  unoptimized?: boolean;
 }) {
   return (
     <ZoomGrid
@@ -30,6 +32,7 @@ export default function PhotoGrid({
             className="w-full rounded-lg"
             loading={isAboveFold ? "eager" : "lazy"}
             sizes="(max-width: 768px) 50vw, 33vw"
+            unoptimized={unoptimized}
           />
         );
       }}
@@ -43,6 +46,7 @@ export default function PhotoGrid({
               width={1200}
               height={900}
               className="max-w-full max-h-full object-contain rounded-lg"
+              unoptimized={unoptimized}
             />
           </div>
         );

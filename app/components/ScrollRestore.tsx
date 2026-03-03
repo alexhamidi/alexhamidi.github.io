@@ -1,29 +1,26 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 
 const STORAGE_KEY = "scroll-progress";
 
 export default function ScrollRestore() {
-  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
   useEffect(() => {
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved) {
       window.scrollTo(0, Number(saved));
     }
 
-    const handleScroll = () => {
-      if (timeoutRef.current) clearTimeout(timeoutRef.current);
-      timeoutRef.current = setTimeout(() => {
-        localStorage.setItem(STORAGE_KEY, String(window.scrollY));
-      }, 300);
+    const save = () => {
+      localStorage.setItem(STORAGE_KEY, String(window.scrollY));
     };
 
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("scrollend", save, { passive: true });
+    window.addEventListener("pagehide", save, { passive: true });
+
     return () => {
-      window.removeEventListener("scroll", handleScroll);
-      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+      window.removeEventListener("scrollend", save);
+      window.removeEventListener("pagehide", save);
     };
   }, []);
 

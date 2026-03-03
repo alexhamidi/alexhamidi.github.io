@@ -1,0 +1,373 @@
+Wilson Lin
+Wilson Lin
+RSS
+X
+GitHub
+Subscribe
+Building blobd: single-machine object store with sub-millisecond reads and 15 GB/s uploads
+Published November 3, 2025
+17 min read
+I decided to experiment with writing an object store from scratch as a fun learning exercise, and to see how much I could get out of NVMe disks I had on my bare metal machines. Specifically, I wanted to really optimize for random reads and small objects — serving user content where the lower the latency, the better. This would not focus on other features; S3 is bottomless, distributed, and managed for example.
+
+I thought it would be interesting to experiment with some ideas:
+
+Leverage newer things like io_uring, async Rust, and atomic writes.
+Drop the ability to list keys and avoid tree-based data structures to gain constant time lookups.
+Use block devices and direct I/O, bypassing filesystems and page cache.
+Modern NVMe SSDs can do hundreds of thousands of random I/O reads per second. How close can I get to these raw numbers? I compared against MinIO, RocksDB with BlobDB, and various filesystems:
+
+
+Then, when doing random 4K reads across these objects, it achieves sub-millisecond time-to-first-byte, regardless of object size:
+
+Store	12.0 KB object size	77.0 KB	338 KB	1.4 MB	3.8 MB	9.7 MB	30.5 MB
+blobd	0.330 ms	0.339	0.380	0.360	0.413	0.553	0.767
+xfs	22.527	23.065	22.593	22.225	22.322	22.321	20.849
+minio	66.454	69.126	85.882	105.755	104.941	195.205	100.248
+
+In this blog post, I'll go over my journey on designing and implementing blobd with explanations for concepts I learnt along the way. It's all open source, so you can follow along and use it freely — check out the GitHub repo for details.
+
+Initial attempt
+Index
+Allocation algorithm
+Allocation state tracking
+Journal
+Server
+blobd
+Direct I/O
+Atomic writes
+Tuple blocks
+In-memory index
+Buddy allocation
+io_uring
+Performance
+Stochastic stresser
+What's next
+Initial attempt
+I initially started with a C implementation and a basic design:
+
+Directly use a raw block device, bypassing any filesystem design and overhead.
+Three components: a "heap" to place objects, an index to map keys to them, and a journal to safely write state.
+Pick or design an algorithm to allocate and deallocate space from the heap.
+Use memory mapping to simplify reading and writing structures on disk.
+Disk layout: reserve space at the start for the journal, allocator state, and index, and use the remaining space for the heap. Each object would have metadata ("inode") and data: the data would be the actual value, while its inode would contain its key, size, version, heap address, etc.
+
+Index
+Most databases use a tree as their index, as opposed to a hash map. One benefit is the ability to iterate by keys in order. But I didn't need this.
+
+A second reason is their ability to grow without needing a full rewrite. Expanding a hash map requires rehashing everything, expensive for I/O. Hash maps also have O(n) worst case performance, whereas trees guarantee O(log n).
+
+However, I tried to think how a hash-based index could work well.
+
+A fixed hash map with chaining would be simpler to implement: each bucket is a pointer, and inserting and removing elements involves simple pointer updates; the performance is guaranteed by the bucket size and hash function. Trees can get more complex (e.g. rebalancing).
+
+To avoid the rehashing problem, can we get away with a large fixed hash? The size of hash indices is proportional to the amount of objects. The amount of objects is inversely proportional to object size. For example, given a 64 TB disk:
+
+Content	Typical size	Capacity
+Image	128 KB	537 million
+PDF	2 MB	34 million
+Audio	10 MB	7 million
+Video	200 MB	336 thousand
+If we assume a mixed workload, an upper bound might be 30 million objects. If each bucket pointer is 6 bytes (supports up to 2^48 byte disks), and we overprovision by 4x and use 120 million buckets, that's 687 MB, or 0.001% of the disk space. Even at 500×3 million buckets, that's 8.4 GB, or 0.01% of disk space.
+
+The O(1) lookups likely helps, because disk latency is much higher than memory, and each node traversal in a tree requires another roundtrip to disk unless cached. Also, these hash index sizes are small enough to fit entirely in memory, saving more roundtrips.
+
+So I took this approach. In memory, one read-write lock exists per bucket, which covers both the bucket state (linked list) as well as any objects (inode + data) in it. How it interacts with each operation:
+
+Create: the object is not added to the index initially, and doesn't lock or update any bucket. Instead, an inode is constructed on disk but unattached.
+Write: the client passes the unique handle identifying the dangling inode's location directly, so no locking is necessary. The allocated space is guaranteed exclusive use for the creation, and won't be freed or overwritten by anyone else.
+Commit/Delete: a write lock is acquired on the bucket in order to modify the linked list as well as potentially objects in it.
+Read: a read lock is acquired on the bucket, to ensure that the linked list or inode metadata won't be changed when reading them, and that objects being read won't get deallocated.
+While locking a bucket could theoretically lock more than one object, we expect one utilized bucket to equal one object almost all the time.
+
+Allocation algorithm
+The simplest way to allocate space on disk for objects is to give the exact bytes requested. The problem is external fragmentation: future allocations rarely match existing "holes". Over time, this degrades to a lot of free space in total but no large enough contiguous region, necessitating compaction or failure.
+
+I decided to go with a very simple allocation algorithm: split the heap into "tiles", hard coded to be 16 MB. To support small allocations, free tiles can convert to "microtiles" that are bump allocated. For example, an allocation of 65 MB would allocate 4 tiles + 1 MB from a microtile.
+
+This fixed the primary external fragmentation issue. However, this has similar "exact allocation" issues for small allocations (microtiles), over time causing lots of compactions. As I was dealing with mostly large objects, so there would be proportionally not as many of these, I accepted the trade-offs at the time.
+
+Allocation state tracking
+I thought about whether it was possible to allocate and deallocate in bounded time. Given 16 MB tiles, and a max disk size of 256 TB, there would be 16,777,216 tiles. There are only two states for a tile: free or used. So I used a hierarchical bitmap, where each bit represents whether there is any free tile in the level below for the range it represents. A visualization:
+
+
+tzcnt_u64 exists as a fast way of getting any set bit. Four instructions can find a free tile or mark one as free/used.
+
+I wondered if I could take a similar approach with tracking usage of microtiles:
+
+struct freelist_s {
+  // For each element, bits [31:8] represent the maximum free amount
+  // of all elements it represents in the next layer, [7:7] if the
+  // tile is not a microtile, and [6:0] the self-index (although
+  // only 4 bits are used as there are only 16 elements per vector).
+  vec_512i_u32_t microtile_free_map_1;
+  vec_512i_u32_t microtile_free_map_2[16];
+  vec_512i_u32_t microtile_free_map_3[16][16];
+  vec_512i_u32_t microtile_free_map_4[16][16][16];
+  vec_512i_u32_t microtile_free_map_5[16][16][16][16];
+  vec_512i_u32_t microtile_free_map_6[16][16][16][16][16];
+}
+To find a microtile with enough space, we can do vectorized comparisons down the hierarchy:
+
+uint64_t freelist_consume_microtile_space(freelist_t* fl, uint32_t bytes_needed) {
+  __m512i y512 = _mm512_set1_epi32(bytes_needed << 8);
+mm512_cmpge_epu32_mask returns a mask with a bit set for each element that is greater than or equal to the value. Then tzcnt_32 gets any element:
+
+  uint32_t m1 = _mm512_cmpge_epu32_mask(fl->microtile_free_map_1.vec, y512);
+  uint32_t p1 = _tzcnt_u32(m1);
+At p1 in fl->microtile_free_map_1 contains enough space for our request. Repeat downwards:
+
+  uint32_t i1, i2, i3, i4, i5, i6;
+  i1 = fl->microtile_free_map_1.elems[p1] & 127;
+  uint16_t m2 = _mm512_cmpge_epu32_mask(fl->microtile_free_map_2[i1].vec, y512);
+  uint32_t p2 = _tzcnt_u32(m2);
+
+  i2 = fl->microtile_free_map_2[i1].elems[p2] & 127;
+  uint16_t m3 = _mm512_cmpge_epu32_mask(fl->microtile_free_map_3[i1][i2].vec, y512);
+  uint32_t p3 = _tzcnt_u32(m3);
+
+  // ... and so on
+I think a well-tuned data structure could outperform these. But I liked the simplicity and guaranteed lower-bound latency of these approaches, and it was interesting to leverage vectorized CPU instructions.
+
+Journal
+Since the process could crash while it's writing inodes and corrupt things, all such writes go through a journal: they are first serialized there, then written disk. If we crash, on startup we'll see the journal entries and re-apply them.
+
+The journal is checksummed using xxHash as it itself could get interrupted while being written. Similarly, applying the journal is idempotent: we can reapply as many times as we want safely, in case it crashes during journal recovery. If the journal hash mismatches, we can safely assume it was not built or erased completely, which is OK.
+
+These metadata writes are quite small, typically less than 100 bytes. Writing each individually to disk immediately would be wasteful:
+
+Disks have a minimum write size, typically 512 bytes. Writing less is write amplification.
+Disks have optimizations for larger sequential writes, transferring more data at once.
+fsync is expensive.
+Therefore, these journal events first go into an in-memory buffer, only written out when full or after some time, to try and batch them.
+
+Server
+epoll is used to avoid blocking threads when reading from and writing to network sockets during request processing.
+
+blobd
+There were some problems with this initial design that I wanted to resolve:
+
+Being written in C made it more difficult to develop: raw pointers, undefined behavior, and barebones libraries.
+mmap and page cache hid a lot of I/O impacts on performance and correctness. Reading a few bytes actually meant loading an entire 4 KB page from disk. Reads and writes implicitly block. Dirty pages could be flushed at any time, so writes were not fully controllable.
+The allocation algorithm lacked efficient deallocation.
+Direct I/O
+In the initial design, the underlying storage was treated as a very large addressable region of bytes. But storage devices actually operate on aligned blocks, typically 512 bytes, not individual bytes. I was going through the page cache, letting the kernel translate things under the hood. This meant:
+
+Unintentional inefficiencies: write amplification, misalignment, hidden latencies.
+The kernel can reorder writes, issue more or less than desired and at arbitrary times, and won't guarantee actual physical writes except via coarse and slow APIs like fsync.
+I decided to change to using direct I/O, forcing every read/write to be block aligned and multiples. It bypasses the kernel page cache and is similar to issuing raw 1:1 I/O requests. Combined with O_DSYNC, this means no more fsync complexity via background flushes and optimal scheduling of syncs.
+
+Atomic writes
+Another interesting hardware feature is atomic writes. When set on a write request, the physical device ensures that it either succeeds or leaves existing data untouched — no torn writes. Our journal inefficiently writes everything twice — this might let us skip that entirely.
+
+As I proceeded with the redesign, I tried to incorporate atomic writes as well as direct I/O.
+
+Tuple blocks
+The original design revolved around disk-resident data structures to represent state. For example, the hash index was stored as a long array of bucket pointers. The amount of free space for a tile i was located at a 24-bit integer on disk. This meant a lot of write amplification.
+
+In reality, all the data is initially read into memory anyway, as one issue is that state, represented on disk, needs to be visibly modified after processing each operation, but not actually modified on disk until flushed via journal — so it's easier to mirror state in memory.
+
+I experimented with instead representing state on disk using bundles of serialized (object_id, object_address) tuples, up to one disk block size (512 bytes). When a tuple is created, it gets placed in any block with enough space. To coalesce writes, existing dirty blocks are prioritized, only allocating if none are suitable. When the server starts, all tuple blocks are read and processed from disk.
+
+This approach also ties into atomic writes. Previously object creations and deletions would require multiple writes at disparate locations: bucket pointer, allocator state, and linked list node pointers. This meant it was not possible to leverage atomic writes, and so journaling was necessary. Now, it's just one atomic block write, so the journal can be dropped.
+
+In-memory index
+With no more disk-resident index, the initial approach was to simply build an index in-memory at startup. This would slow down startup, which I was OK with. It would also use more memory, something worth investigating.
+
+Using the previous example of 30 million objects, assuming every key was 256 bytes, it would require 7 GB of memory to load the entire key set into memory. At 80 bytes, it would be 2 GB. If you hash every key using BLAKE3 (works only for point lookups), it would occupy 0.9 GB of RAM. So it seems reasonable to hold the entire index in memory.
+
+I did a quick empirical test over a real world upper-scale dataset: indexing 282 million URLs (15.1 GB) from my search engine crawl on an AMD EPYC 7502P server:
+
+Data structure	Insert time (sec.)	Inserts per second	Memory usage (GB)
+ahash::HashMap	102.3	2,755,047	31.4
+ahash::HashMap + BLAKE3	171.8	1,641,377	16.5
+ahash::HashMap + MD5	183.2	1,539,116	8.5
+blart::TreeMap + CString	72.3	3,897,173	43.8
+fst::Set	644.7	437,264	5.5
+std::collections::BTreeMap	121.3	2,323,753	32.5
+The standard data structures took up about 2x the raw bytes in memory. Interestingly, there isn't much difference between the BTreeMap and HashMap, meaning range functionality could be added without much cost. blart is an implementation of the adaptive radix tree, which promises tree functionality with both faster performance and lower memory usage, but only resulted in one. If only point lookups are needed, hashing keys is a viable approach.
+
+I believe there is room for optimization here, as the fst crate demonstrates. FSTs are very compact but static string-key maps. One approach is to build them repeatedly as the index grows, and use an overlay for intermediate keys between snapshots. Another disk-memory hybrid technique could be LSMTs.
+
+It's also now possible to switch out indices depending on use case (e.g. hash map for point lookups, tree map for range queries), and optimize them over time, without any data migration.
+
+Buddy allocation
+The buddy memory allocation algorithm replaced my original design. I found it nice and simple to implement, and it minimizes fragmentation while remaining very fast thanks to only using bitwise operations.
+
+It works by defining a set of allocation sizes, increasing by power-of-2. In blobd, the possible allocation sizes are 4 KB (212), 8 KB (213), 16 KB (214), all the way up to 16 MB (224). Then, the heap is divided into pieces and a bitmap represents whether each piece is free or not, with one bitmap for each size. Initially, all 16 MB pieces are free, while all pieces of all other sizes are not.
+
+To allocate, find a free piece of the nearest allocation size. If none is available, allocate a piece from the next higher allocation size and "break" it into two, such that there's now two free pieces of the intended size. This can recurse all the way to the largest allocation size. To deallocate, mark that piece as free. If it's "buddy" piece, which is the previous even-address piece if it's odd and vice versa, is also free, then both coalesce back into the larger next-sized piece, recursing all the way to the largest allocation size.
+
+It's greedy and simple, with minimal overhead and complexity, yet handles large disks, many objects, varying sizes, and reclaiming of space over long periods. The Wikipedia article has a good example with a visualization.
+
+Unlike malloc, we don't need to store all of an object's data contiguously, so we can further reduce internal fragmentation by dividing the final <16 MB chunk into smaller-and-smaller fragments.
+
+io_uring
+I went with io_uring to get fast async I/O, which works by using two queues: one to send requests, one to get responses. Instead of frequently making expensive syscalls (e.g. read), you issue a lot of request messages (e.g. IORING_OP_READ) and then submit them to io_uring, which will execute them on your behalf in their kernel threads. Then you have some thread that repeatedly polls the other queue for their results.
+
+
+In io_uring, you submit requests in one queue, and get responses out in another. Syscalls are avoided by having the kernel, on the other end of the queues, do them for you in the background. Diagram courtesy of Red Hat.
+It worked nicely with Rust + Tokio: async, queues, and oneshots:
+
+impl UringFile {
+  async fn read_at(&self, offset: u64, len: u64) -> Vec<u8> {
+    // Notifier to wake us up when io_uring has done our thing.
+    let (tx, rx) = oneshot::channel();
+    // Send the request to our submission thread, which submits it to io_uring.
+    self.userspace_requests_queue.send(Request::Read {
+      req: ReadRequest { out_buf: vec![0u8; len], offset, len: u32!(len) },
+      res: tx,
+    });
+    // Wait on our notifier, sleeping until then.
+    rx.await
+  }
+}
+
+// Using it looks like a normal async File:
+let res = file.read_at(offset, len).await;
+Under the hood, we spawn two userspace threads to submit requests and consume responses. Standard queues make it easy to do this in Rust:
+
+// Spawn our userspace submission thread.
+thread::spawn(|| {
+  let mut uring_submission_queue = unsafe { ring.submission_shared() };
+  // We use IDs to track requests on our end, match up responses from io_uring.
+  let mut next_id = 0;
+  while let Ok(msg) = userspace_requests_queue.recv() {
+    let id = next_id; next_id += 1;
+    // Build io_uring specific request entry.
+    let entry = match &msg {
+      Request::Read { req, .. } => {
+        let ptr = req.out_buf.as_ptr() as *mut u8;
+        // `Fixed(0)` means use the file descriptor we registered during setup.
+        opcode::Read::new(Fixed(0), ptr, req.len).offset(req.offset).build().user_data(id)
+      }
+      Request::Write { req, .. } => {
+        let ptr = req.data.as_ptr() as *mut u8;
+        let len = req.data.len() as u32;
+        opcode::Write::new(Fixed(0), ptr, len).offset(req.offset).build().user_data(id)
+      }
+    };
+    // Store the request in userspace so we know how to handle when we get its response.
+    // This also ensures buffers we passed to io_uring remain alive.
+    pending.insert(id, msg);
+    if uring_submission_queue.is_full() {
+      uring_submission_queue.sync();
+      ring.submit_and_wait(1).unwrap();
+    }
+    unsafe { uring_submission_queue.push(&entry).unwrap(); };
+    uring_submission_queue.sync();
+    ring.submit().unwrap();
+  }
+});
+These code snippets has been simplified for brevity. On the responses end:
+
+// Spawn our userspace completion thread.
+thread::spawn(|| {
+  let mut uring_completion_queue = unsafe { ring.completion_shared() };
+  loop {
+    // Wake when io_uring has new response ready.
+    let Some(e) = uring_completion_queue.next() else {
+      ring.submit_and_wait(1).unwrap();
+      uring_completion_queue.sync();
+      continue;
+    };
+    // Get corresponding userspace request.
+    let id = e.user_data();
+    let req = pending.remove(&id).unwrap().1;
+    match req {
+      // Signal caller that it's done.
+      Request::Read { req, res } => res.send(req.out_buf),
+      Request::Write { req, res } => res.send(req.data),
+    }
+  }
+});
+Performance
+Let’s see how these designs perform in practice. I wrote a Rust benchmark to hit object stores concurrently in phases, one for each operation type, and then tested against:
+
+Store	Configuration
+blobd
+blobd-lite (the initial design)	mdadm RAID 0, 16777216 buckets
+RocksDB with BlobDB	mdadm RAID 0, xfs, options
+MinIO	xfs
+btrfs	Native RAID 0 (data, metadata)
+ext4	mdadm RAID 0
+xfs	mdadm RAID 0
+Note that I'm comparing specifically around performance, which is what blobd is designed for. Other systems were designed with additional goals in mind — keep this in mind when comparing. Also:
+
+RocksDB lacks the ability to read (Get) ranges and upload (Put) in parts
+MinIO used the Rust AWS SDK and S3-compatible REST API over 127.0.0.1
+For each phase, at most 1024 operations are requested over all object keys. Object keys are range(object_count), serialized as big-endian 64-byte integers, shuffled in each phase to randomize request order. Object data is generated using random bytes of object_size. The kernel page cache is evicted before each read phase, and malloc_trim(0) is called between stores, to accurately measure memory usage and avoid any existing cache from skewing results. The phases are:
+
+Begin multipart upload (no-op for RocksDB, creat for file systems)
+Upload parts (one part for RocksDB, open(DSYNC) + seek + write for file systems)
+Commit object (no-op for RocksDB and file systems)
+Inspect object
+Read small range of object from random offset
+Read entire object
+Delete object
+Testing was done on a machine with:
+
+AMD EPYC 7502P 32-core/64-thread CPU
+16x32 (512) GB DDR4 ECC RAM
+Debian 12, Linux 6.12.19
+8x3.84 TB Micron 7300 PRO MTFDHBE3T8TDF NVMe SSDs
+3 GB/s seq. read, 1.8 GB/s seq. write
+520K random read IOPS, 70K random write IOPS
+90 μs random read, 25 μs random write
+Micron 3D TLC NAND
+PCIe Gen3 1x4, 2x2 NVMe
+The system was tuned with the following commands:
+
+Let's start with uploading objects. RocksDB isn't present as it doesn't have these methods.
+
+
+The drop in commits per second for blobd at higher object sizes is likely due to not enough requests.
+
+Uploading parts:
+
+
+A key focus was optimizing for random reads. In this test, 4000-byte reads are done from random offsets.
+
+
+Part of this was a goal for consistent low latency random reads, regardless of object size:
+
+
+Here are the exact numbers:
+
+Store	Metric	12.1 KB	77.1 KB	337 KB	1.4 MB	3.8 MB	9.7 MB	31 MB
+direct	Avg	0.330	0.339	0.380	0.360	0.413	0.553	0.767
+rocksdb	Avg	4.122	5.235	13.169	55.003	163.355	391.346	1123.244
+xfs	Avg	22.527	23.065	22.593	22.225	22.322	22.321	20.849
+ext4	Avg	22.624	22.883	22.280	21.849	21.862	20.473	20.926
+btrfs	Avg	23.104	23.376	23.035	22.935	23.337	23.155	23.506
+lite	Avg	43.952	42.995	42.291	41.141	41.754	41.979	40.500
+minio	Avg	66.454	69.126	85.882	105.755	104.941	195.205	100.248
+direct	P99	0.996	0.998	1.314	1.385	3.500	3.994	5.319
+rocksdb	P99	11.260	14.015	39.980	193.706	602.324	1374.650	3789.236
+xfs	P99	40.990	41.608	40.786	40.266	40.424	41.063	40.700
+ext4	P99	40.666	41.843	40.482	40.252	45.628	65.776	82.561
+btrfs	P99	41.836	42.422	42.041	42.393	46.542	54.454	71.596
+lite	P99	71.889	68.484	67.511	65.665	68.627	73.304	82.044
+minio	P99	249.594	374.208	980.492	1258.599	1294.902	1380.968	153.009
+System resources usage:
+
+
+The increase in memory usage as object sizes go up is likely due to to the benchmarking harness itself — 1024x32 MB is 32 GB.
+
+Write amplification and overhead:
+
+
+Stochastic stresser
+I explored a harness to hit blobd with a lot of varying concurrent operations, to try and put it in an unexpected state and elicit bad behavior, called the stochastic stresser. It works by using a queue of valid tasks that could be performed. But instead of predictable FIFO polling, it dequeues random entries — legal tasks, but executed unpredictably.
+
+This "stochastic" queue is backed by a vector of entries. When pushing, it is appended to the end. Popping picks a random index, then does an O(1) swap_remove; this is how the queue is made random. It's wrapped in a condvar, woken on pushes and sender/receiver changes, for efficient waiting on messages.
+
+It's quite simple, but was able to catch subtle correctness bugs and race conditions. The next improvement would be to simulate crashes, hardware failures, and system errors.
+
+What's next
+There are some low hanging improvements that can be had around performance, such as caching metadata to avoid repeated disk reads when repeatedly hitting the same object in a short time period. Improving the developer experience is also a near-term goal — polishing documentation, creating more language bindings, and simplifying the configuration.
+
+I am experimenting with a distributed blobd with replication and sharding, for cases where a single node is not enough.
+
+It would be interesting to investigate using these primitives — atomic writes, io_uring, tuple blocks — for a KV store, optimized for small values. Could there be similar gains in performance and simplicity?
+
+You can check out the open source code and usage instructions on the GitHub repo. Feel free to raise issues, ask questions and start discussions about blobd there! I'm especially interested in ideas or considerations to use blobd in projects, how the performance can benefit, and any limitations around using it.
