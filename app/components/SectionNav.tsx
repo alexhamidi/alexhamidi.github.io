@@ -125,6 +125,7 @@ export default function SectionNav({ books }: SectionNavProps) {
   }, []);
 
   const socialLinks = [
+    { href: "/resume.pdf", label: "Resume" },
     { href: "https://twitter.com/ahamidi_", label: "Twitter" },
     { href: "https://github.com/alexhamidi", label: "GitHub" },
     { href: "https://news.ycombinator.com/user?id=alexhamidi", label: "HN" },
@@ -191,7 +192,7 @@ export default function SectionNav({ books }: SectionNavProps) {
           <a
             key={link.label}
             href={link.href}
-            {...((link.href.startsWith("http") || link.href === "/images") && {
+            {...((link.href.startsWith("http") || link.href === "/images" || link.href === "/resume.pdf") && {
               target: "_blank",
               rel: "noopener noreferrer",
             })}

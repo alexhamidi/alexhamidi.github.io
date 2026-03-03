@@ -23,7 +23,62 @@ type PostIt = {
 };
 
 const STORAGE_KEY = "postit-wall";
+const SESSION_KEY = "postit-session-id";
 const EVENT_NAME = "postit-added";
+
+function getIdeasApiBase(): string {
+  if (typeof window === "undefined") return "";
+  const fromEnv = (process.env.NEXT_PUBLIC_IDEAS_API ?? "").trim().replace(/\/$/, "");
+  if (fromEnv) return fromEnv;
+  if (window.location?.hostname === "localhost") return "http://localhost:3000";
+  return "";
+}
+
+function getSessionId(): string {
+  if (typeof window === "undefined") return "";
+  let id = localStorage.getItem(SESSION_KEY);
+  if (!id) {
+    id = "s-" + Date.now().toString(36) + "-" + Math.random().toString(36).slice(2, 11);
+    localStorage.setItem(SESSION_KEY, id);
+  }
+  return id;
+}
+
+async function fetchIdeas(sessionId: string): Promise<PostIt[]> {
+  const base = getIdeasApiBase();
+  if (!base) return [];
+  const res = await fetch(`${base}/api/ideas?session_id=${encodeURIComponent(sessionId)}`);
+  const data = await res.json();
+  if (!Array.isArray(data?.ideas) || data.ideas.length === 0) return [];
+  return data.ideas.map((r: { text: string; color?: string; rotation?: number; x?: number; y?: number; timestamp?: number }) => ({
+    text: r.text ?? "",
+    color: r.color ?? "#fde047",
+    rotation: Number(r.rotation) ?? 0,
+    x: Number(r.x) ?? 0,
+    y: Number(r.y) ?? 0,
+    timestamp: Number(r.timestamp) ?? Date.now(),
+  }));
+}
+
+async function saveIdeasToApi(sessionId: string, ideas: PostIt[]) {
+  const base = getIdeasApiBase();
+  if (!base) return;
+  await fetch(`${base}/api/ideas`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      session_id: sessionId,
+      ideas: ideas.map((n) => ({
+        text: n.text,
+        color: n.color,
+        rotation: n.rotation,
+        x: n.x,
+        y: n.y,
+        timestamp: n.timestamp,
+      })),
+    }),
+  });
+}
 
 const DEFAULT_TEXTS = [
   "Becoming clear that CLI is the best interface for agents... Every developer-related product (and eventually every product) needs to have a comprehensive CLI. Modal does this exceptionally",
@@ -138,8 +193,23 @@ function DraggableNote({ note, index, onMove }: { note: PostIt; index: number; o
 export default function PostItWall() {
   const [notes, setNotes] = useState<PostIt[]>([]);
 
-  const load = useCallback(() => {
+  const load = useCallback(async () => {
     if (typeof window === "undefined") return;
+    const sessionId = getSessionId();
+
+    if (getIdeasApiBase()) {
+      try {
+        const fromApi = await fetchIdeas(sessionId);
+        if (fromApi.length > 0) {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(fromApi));
+          setNotes(fromApi);
+          return;
+        }
+      } catch {
+        // fall through to localStorage/defaults
+      }
+    }
+
     const stored = localStorage.getItem(STORAGE_KEY);
     const parsed = stored ? JSON.parse(stored) : [];
     if (Array.isArray(parsed) && parsed.length > 0) {
@@ -156,6 +226,30 @@ export default function PostItWall() {
     window.addEventListener(EVENT_NAME, load);
     return () => window.removeEventListener(EVENT_NAME, load);
   }, [load]);
+
+  useEffect(() => {
+    const base = getIdeasApiBase();
+    if (!base || notes.length === 0) return;
+    const t = setTimeout(() => {
+      saveIdeasToApi(getSessionId(), notes).catch(() => {});
+    }, 400);
+    return () => clearTimeout(t);
+  }, [notes]);
+
+  useEffect(() => {
+    const base = getIdeasApiBase();
+    if (!base) return;
+    const flush = () => {
+      const sessionId = getSessionId();
+      const raw = localStorage.getItem(STORAGE_KEY);
+      const list = raw ? JSON.parse(raw) : [];
+      if (Array.isArray(list) && list.length > 0) {
+        saveIdeasToApi(sessionId, list).catch(() => {});
+      }
+    };
+    window.addEventListener("pagehide", flush);
+    return () => window.removeEventListener("pagehide", flush);
+  }, []);
 
   const handleMove = useCallback((index: number, x: number, y: number) => {
     setNotes((prev) => {
