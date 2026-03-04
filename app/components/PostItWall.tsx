@@ -23,7 +23,6 @@ type PostIt = {
 };
 
 const STORAGE_KEY = "postit-wall";
-const SESSION_KEY = "postit-session-id";
 const EVENT_NAME = "postit-added";
 
 function getIdeasApiBase(): string {
@@ -34,87 +33,52 @@ function getIdeasApiBase(): string {
   return "";
 }
 
-function getSessionId(): string {
-  if (typeof window === "undefined") return "";
-  let id = localStorage.getItem(SESSION_KEY);
-  if (!id) {
-    id = "s-" + Date.now().toString(36) + "-" + Math.random().toString(36).slice(2, 11);
-    localStorage.setItem(SESSION_KEY, id);
+async function fetchIdeas(): Promise<PostIt[]> {
+  const base = getIdeasApiBase();
+  const url = base ? `${base}/api/postits` : "/api/postits";
+  try {
+    const res = await fetch(url);
+    const data = await res.json();
+    if (!Array.isArray(data?.ideas)) return [];
+    return data.ideas.map((r: { text: string; color?: string; rotation?: number; x?: number; y?: number; timestamp?: number }) => ({
+      text: r.text ?? "",
+      color: r.color ?? "#fde047",
+      rotation: r.rotation != null ? Number(r.rotation) : 0,
+      x: r.x != null ? Number(r.x) : 0,
+      y: r.y != null ? Number(r.y) : 0,
+      timestamp: r.timestamp != null ? Number(r.timestamp) : Date.now(),
+    }));
+  } catch {
+    return [];
   }
-  return id;
-}
-
-async function fetchIdeas(sessionId: string): Promise<PostIt[]> {
-  const base = getIdeasApiBase();
-  if (!base) return [];
-  const res = await fetch(`${base}/api/ideas?session_id=${encodeURIComponent(sessionId)}`);
-  const data = await res.json();
-  if (!Array.isArray(data?.ideas) || data.ideas.length === 0) return [];
-  return data.ideas.map((r: { text: string; color?: string; rotation?: number; x?: number; y?: number; timestamp?: number }) => ({
-    text: r.text ?? "",
-    color: r.color ?? "#fde047",
-    rotation: Number(r.rotation) ?? 0,
-    x: Number(r.x) ?? 0,
-    y: Number(r.y) ?? 0,
-    timestamp: Number(r.timestamp) ?? Date.now(),
-  }));
-}
-
-async function saveIdeasToApi(sessionId: string, ideas: PostIt[]) {
-  const base = getIdeasApiBase();
-  if (!base) return;
-  await fetch(`${base}/api/ideas`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      session_id: sessionId,
-      ideas: ideas.map((n) => ({
-        text: n.text,
-        color: n.color,
-        rotation: n.rotation,
-        x: n.x,
-        y: n.y,
-        timestamp: n.timestamp,
-      })),
-    }),
-  });
-}
-
-const DEFAULT_TEXTS = [
-  "Becoming clear that CLI is the best interface for agents... Every developer-related product (and eventually every product) needs to have a comprehensive CLI. Modal does this exceptionally",
-  "Personal software that sits on all your devices, recording location & audio, and creates a map of your life/diary",
-  "Generative world models for anywhere (promptable reality/street view)",
-  "Some better way of doomscrolling... maybe articles? wikipedia? Sometimes have the impulse to scroll but would much rather be doing something educational, but there is a lack of options",
-  "Evolution is just the accumulation of mutation. Build something to track/simulate this process",
-  "Science fiction where we are the ai getting prompted",
-  "General agent for web scraping. In theory could populate everything from sitescroll in 5 prompts. Simple would just be tools to control browser + check all requests and responses inside a coding environment",
-];
-
-function getDefaultNotes(): PostIt[] {
-  const positions = [[10, 5], [55, 15], [5, 55], [50, 50], [75, 35], [30, 70], [20, 30]];
-  return DEFAULT_TEXTS.map((text, i) => ({
-    text,
-    color: COLORS[i % COLORS.length],
-    rotation: (i - 2) * 4,
-    x: positions[i][0],
-    y: positions[i][1],
-    timestamp: 1000000000000 + i,
-  }));
 }
 
 export function addPostIt(text: string) {
-  const existing: PostIt[] = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
-  const note: PostIt = {
-    text,
-    color: COLORS[Math.floor(Math.random() * COLORS.length)],
-    rotation: (Math.random() - 0.5) * 12,
-    x: Math.random() * 80,
-    y: Math.random() * 80,
-    timestamp: Date.now(),
-  };
-  existing.push(note);
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(existing));
-  window.dispatchEvent(new CustomEvent(EVENT_NAME));
+  const base = getIdeasApiBase();
+  const url = base ? `${base}/api/postits` : "/api/postits";
+  fetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ idea: text }),
+  })
+    .then((res) => {
+      if (res.ok) window.dispatchEvent(new CustomEvent(EVENT_NAME));
+      else throw new Error();
+    })
+    .catch(() => {
+      const note: PostIt = {
+        text,
+        color: COLORS[Math.floor(Math.random() * COLORS.length)],
+        rotation: (Math.random() - 0.5) * 12,
+        x: Math.random() * 80,
+        y: Math.random() * 80,
+        timestamp: Date.now(),
+      };
+      const existing: PostIt[] = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+      existing.push(note);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(existing));
+      window.dispatchEvent(new CustomEvent(EVENT_NAME));
+    });
 }
 
 function DraggableNote({ note, index, onMove }: { note: PostIt; index: number; onMove: (i: number, x: number, y: number) => void }) {
@@ -195,30 +159,14 @@ export default function PostItWall() {
 
   const load = useCallback(async () => {
     if (typeof window === "undefined") return;
-    const sessionId = getSessionId();
-
-    if (getIdeasApiBase()) {
-      try {
-        const fromApi = await fetchIdeas(sessionId);
-        if (fromApi.length > 0) {
-          localStorage.setItem(STORAGE_KEY, JSON.stringify(fromApi));
-          setNotes(fromApi);
-          return;
-        }
-      } catch {
-        // fall through to localStorage/defaults
-      }
+    const fromApi = await fetchIdeas();
+    if (fromApi.length > 0) {
+      setNotes(fromApi);
+      return;
     }
-
     const stored = localStorage.getItem(STORAGE_KEY);
     const parsed = stored ? JSON.parse(stored) : [];
-    if (Array.isArray(parsed) && parsed.length > 0) {
-      setNotes(parsed);
-    } else {
-      const defaults = getDefaultNotes();
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(defaults));
-      setNotes(defaults);
-    }
+    setNotes(Array.isArray(parsed) ? parsed : []);
   }, []);
 
   useEffect(() => {
@@ -227,35 +175,10 @@ export default function PostItWall() {
     return () => window.removeEventListener(EVENT_NAME, load);
   }, [load]);
 
-  useEffect(() => {
-    const base = getIdeasApiBase();
-    if (!base || notes.length === 0) return;
-    const t = setTimeout(() => {
-      saveIdeasToApi(getSessionId(), notes).catch(() => {});
-    }, 400);
-    return () => clearTimeout(t);
-  }, [notes]);
-
-  useEffect(() => {
-    const base = getIdeasApiBase();
-    if (!base) return;
-    const flush = () => {
-      const sessionId = getSessionId();
-      const raw = localStorage.getItem(STORAGE_KEY);
-      const list = raw ? JSON.parse(raw) : [];
-      if (Array.isArray(list) && list.length > 0) {
-        saveIdeasToApi(sessionId, list).catch(() => {});
-      }
-    };
-    window.addEventListener("pagehide", flush);
-    return () => window.removeEventListener("pagehide", flush);
-  }, []);
-
   const handleMove = useCallback((index: number, x: number, y: number) => {
     setNotes((prev) => {
       const updated = [...prev];
       updated[index] = { ...updated[index], x, y };
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
       return updated;
     });
   }, []);
