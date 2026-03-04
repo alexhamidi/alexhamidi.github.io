@@ -22,7 +22,6 @@ type PostIt = {
   timestamp: number;
 };
 
-const STORAGE_KEY = "postit-wall";
 const EVENT_NAME = "postit-added";
 
 function getIdeasApiBase(): string {
@@ -60,25 +59,9 @@ export function addPostIt(text: string) {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ idea: text }),
-  })
-    .then((res) => {
-      if (res.ok) window.dispatchEvent(new CustomEvent(EVENT_NAME));
-      else throw new Error();
-    })
-    .catch(() => {
-      const note: PostIt = {
-        text,
-        color: COLORS[Math.floor(Math.random() * COLORS.length)],
-        rotation: (Math.random() - 0.5) * 12,
-        x: Math.random() * 80,
-        y: Math.random() * 80,
-        timestamp: Date.now(),
-      };
-      const existing: PostIt[] = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
-      existing.push(note);
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(existing));
-      window.dispatchEvent(new CustomEvent(EVENT_NAME));
-    });
+  }).then((res) => {
+    if (res.ok) window.dispatchEvent(new CustomEvent(EVENT_NAME));
+  });
 }
 
 function DraggableNote({ note, index, onMove }: { note: PostIt; index: number; onMove: (i: number, x: number, y: number) => void }) {
@@ -160,13 +143,7 @@ export default function PostItWall() {
   const load = useCallback(async () => {
     if (typeof window === "undefined") return;
     const fromApi = await fetchIdeas();
-    if (fromApi.length > 0) {
-      setNotes(fromApi);
-      return;
-    }
-    const stored = localStorage.getItem(STORAGE_KEY);
-    const parsed = stored ? JSON.parse(stored) : [];
-    setNotes(Array.isArray(parsed) ? parsed : []);
+    setNotes(fromApi);
   }, []);
 
   useEffect(() => {
