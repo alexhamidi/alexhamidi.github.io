@@ -11,6 +11,7 @@ import PostItWall from "./components/PostItWall";
 import ContactForm from "./components/ContactForm";
 import ScrollRestore from "./components/ScrollRestore";
 import HeroButtons from "./components/HeroButtons";
+import CopyEmail from "./components/CopyEmail";
 import { getData } from "./utils/getData";
 import { ProjectItem, MusicItem, BookItem } from "./utils/interfaces"
 
@@ -69,6 +70,7 @@ export default async function Home() {
         <p className="mt-4 text-base text-neutral-600 leading-relaxed">
         I’m a software engineer studying CS at UCSD. Previously I worked on 7TB search infrastructure at Clado and automations at Amazon. This is my blog where I post about things I’m interested in, mostly related to tech and llms
         </p>
+
 {/*
 <p className="mt-5 text-base text-neutral-600 leading-relaxed">
   I try to reason{" "}
@@ -96,7 +98,9 @@ export default async function Home() {
         <li>Using LLMs to build search and retrieval systems that operate on internet scale</li>
 
           </ul>
-
+          <p className="mt-5 text-base text-neutral-600 leading-relaxed">
+          <CopyEmail />
+        </p>
       <HeroButtons />
 
       {/* I’m a software engineer living in San Francisco. Previously I was at South Park Commons and Figma, and graduated from UC Berkeley in 2019. This is my blog where I post about things I’m interested in, mostly tech-related. */}
