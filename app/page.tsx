@@ -67,7 +67,7 @@ export default async function Home() {
           Alex Hamidi
         </h1>
         <p className="mt-4 text-base text-neutral-600 leading-relaxed">
-        I’m a software engineer living in San Diego. Previously I worked on 7TB search infrastructure at Clado and automations at Amazon. This is my blog where I post about things I’m interested in, mostly related to tech and llms
+        I’m a software engineer studying CS at UCSD. Previously I worked on 7TB search infrastructure at Clado and automations at Amazon. This is my blog where I post about things I’m interested in, mostly related to tech and llms
         </p>
 {/*
 <p className="mt-5 text-base text-neutral-600 leading-relaxed">
