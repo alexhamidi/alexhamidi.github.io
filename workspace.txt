@@ -5,13 +5,13 @@ I help run SDxUCSD,, a startup accelerator at UC San Diego, connecting founders 
 
 Outside of code I make music, shoot film, and read too many books. Every experience is an opportunity to understand the world and myself better.
 
-      
-          
 
-        
+
+
+
 Engineer currently running SDxUCSD, creating [music, writing, software], and learning about diffusion models
 
-My view of excellence aligns with [Aristotle's concept of arete], which I seek through creation, learning, and physical optimization. I try to reason deductively whenver possible. 
+My view of excellence aligns with [Aristotle's concept of arete], which I seek through creation, learning, and physical optimization. I try to reason deductively whenver possible.
 
 I value most people interested in their work and out-of-distribution art.
 
@@ -25,12 +25,12 @@ In the past, I've:
 - Bikepacked 1000km to a fjord in Newfoundland
 - Lived in an artist's sea tower in Panama
 - Built an industrial-scale kefir fermentation facility
-- Won state-level college programming competitions 
+- Won state-level college programming competitions
 
 Almost everything on this site is [Clickable]<this is clickable>
 
 
-examples: 
+examples:
 
 ---
 At the moment I'm

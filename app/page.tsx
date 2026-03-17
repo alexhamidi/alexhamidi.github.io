@@ -90,8 +90,9 @@ export default async function Home() {
           I&apos;m excited about:
         </p>
         <ul className="mt-2 text-base text-neutral-600 leading-relaxed list-disc pl-5 space-y-1">
+        <li>Using generative video models to create compelling, multimodal art that resonates unlike anything else</li>
         <li>Improving coding agents through RL and scaffolding in order to obviate tedious knowledge work </li>
-        <li>Using LLMs to build search and retrieval systems that operate on internet scale</li>
+        <li>In general, building things that extend the manifold of human creativity and capabiliy</li>
 
           </ul>
           <p className="mt-5 text-base text-neutral-600 leading-relaxed">
