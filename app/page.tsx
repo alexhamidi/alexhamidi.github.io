@@ -136,7 +136,7 @@ export default async function Home() {
             </a>
           </section>
 
-          {/* <section id="projects" className="scroll-mt-8 mb-16 mt-10">
+          <section id="projects" className="scroll-mt-8 mb-16 mt-10">
             <SectionHeader title="projects" />
             <ProjectSection projects={projects} />
             <a
@@ -145,7 +145,7 @@ export default async function Home() {
             >
               see all software →
             </a>
-          </section> */}
+          </section>
 
           {/* <section id="music" className="scroll-mt-8 mb-16 mt-10">
             <SectionHeader title="music" />
