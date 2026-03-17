@@ -23,6 +23,7 @@ export interface ProjectItem {
   volume?: number;
   slug?: string;
   content?: string;
+  notebook?: string;
   mdxSource?: MDXRemoteSerializeResult;
 };
 

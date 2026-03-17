@@ -1,3 +1,5 @@
+import fs from "fs";
+import path from "path";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import "katex/dist/katex.min.css";
@@ -9,6 +11,7 @@ import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { oneLight } from "react-syntax-highlighter/dist/esm/styles/prism";
 import { getData } from "../../utils/getData";
 import { ProjectItem } from "../../utils/interfaces";
+import NotebookViewer, { type NotebookData } from "../../components/NotebookViewer";
 
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
@@ -46,6 +49,14 @@ export default async function WritingPage({
 
   if (!post) notFound();
 
+  let notebook: NotebookData | null = null;
+  if (post.notebook) {
+    const nbPath = path.join(process.cwd(), "public", post.notebook);
+    if (fs.existsSync(nbPath)) {
+      notebook = JSON.parse(fs.readFileSync(nbPath, "utf-8")) as NotebookData;
+    }
+  }
+
   return (
     <div className="w-full max-w-4xl mx-auto px-8 md:px-16 pt-12 pb-16">
       <Link
@@ -74,7 +85,9 @@ export default async function WritingPage({
           />
         </div>
       )}
-      {post.content ? (
+      {notebook ? (
+        <NotebookViewer notebook={notebook} />
+      ) : post.content ? (
         <div className="prose prose-neutral max-w-4xl mt-4">
           <ReactMarkdown
             remarkPlugins={[remarkGfm, remarkMath]}
