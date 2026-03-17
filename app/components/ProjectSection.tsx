@@ -246,7 +246,7 @@ export default function ProjectSection({ projects, showDates = false, fullWidth 
             <>
               <ProjectMedia project={project} />
               <div className="flex items-center gap-2 mb-1">
-                <h3 className={`text-sm font-normal text-neutral-700 text-balance ${!isStatic ? "group-hover:text-neutral-800 transition-colors" : ""}`}>
+                <h3 className="text-sm font-normal text-neutral-700 text-balance">
                   {project.title}
                   {project.blog && !hideBlogTag && (
                     <span className="ml-2 px-1.5 py-0.5 text-[10px] font-medium bg-neutral-100 text-neutral-500 rounded lowercase transition-colors group-hover:bg-neutral-200 group-hover:text-black">
@@ -267,7 +267,7 @@ export default function ProjectSection({ projects, showDates = false, fullWidth 
                   </span>
                 )}
               </div>
-              <p className={`text-neutral-400 leading-relaxed text-[13px] line-clamp-3 ${!isStatic ? "group-hover:text-neutral-800 transition-colors" : ""}`}>
+              <p className="text-neutral-400 leading-relaxed text-[13px] line-clamp-3">
                 {project.description}
               </p>
             </>
