@@ -61,6 +61,19 @@ export default async function WritingPage({
         </h1>
         <span className="text-[11px] text-neutral-300">{formatDate(post.date)}</span>
       </div>
+      {post.video && (
+        <div className="mb-6 w-full aspect-video overflow-hidden rounded-lg border border-neutral-200">
+          <video
+            src={post.video}
+            poster={post.video.replace(/\.[^.]+$/, "-poster.jpg")}
+            className="w-full h-full object-cover"
+            controls
+            playsInline
+            loop
+            preload="metadata"
+          />
+        </div>
+      )}
       {post.content ? (
         <div className="prose prose-neutral max-w-4xl mt-4">
           <ReactMarkdown

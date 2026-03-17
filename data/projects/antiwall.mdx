@@ -1,30 +1,15 @@
 ---
 title: "post-training qwen to reason deductively"
-description: ""
+description: "building a search agent that reasons deductively and cites every claim, instead of outputting a text wall"
 date: "2025-02-01"
 link: "https://antiwall.vercel.app"
 blog: true
 order: 2
 image: "/projects/antiwall.png"
+video: "/projects/antiwall.mp4"
 ---
 
-its 2am and i dont feel like writing a blog yet but
+[antiwall.vercel.app](https://antiwall.vercel.app)
 
-motivation:
-LLMs (esp. gpt) output a 'text wall' and lack rigor. This is very annoying. grok purportedly fixes this but it doesnt. can it really be THAT hard?
+blog coming soon
 
-I resolved to fix this with a style-tuned agent that has deductive reasoning built in
-
-I first pulled a bunch of chats from the chatbotarena dataset to:
-1. first, see if people even ask the type of queries im trying to fulfill
-2. If yes, then annotate real examples
-
-There were enough (~.1) so I labeled (this was annoying and took like 4 hours but worth)
-
-then i sft'd qwen 32b on these examples using lora in modal
-
-then i made the prompt was created by claude code being prompted to repeatedly run tests and then update prompt in a VM (i run a wrapper over claude to prompt it) and so its essentially autopotimized, then told claude to look at the system-prompts-and-models-of-ai-tools and update formatting to adhere to best practices
-
-Then i built the search harness, exposes markdown web fetch and a custom neural search using semantic search on wiki citations and reputable cites. Had to test and considered RL but was able to get good results without
-
-towards the end i was mostly doing vibe evals
