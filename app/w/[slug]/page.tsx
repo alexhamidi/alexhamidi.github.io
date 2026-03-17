@@ -25,12 +25,7 @@ function formatDate(dateStr: string): string {
 }
 
 async function getAllBlogPosts(): Promise<(ProjectItem & { slug: string })[]> {
-  const [writing, projects] = await Promise.all([
-    getData<ProjectItem>("writing"),
-    getData<ProjectItem>("projects"),
-  ]);
-  const blogProjects = projects.filter((p) => p.blog);
-  return [...writing, ...blogProjects];
+  return getData<ProjectItem>("posts");
 }
 
 export async function generateStaticParams() {

@@ -39,13 +39,9 @@ const photos = [
 export default async function Home() {
   const work = await getData<ProjectItem>("work");
   const projects = await getData<ProjectItem>("projects");
-  const writing = await getData<ProjectItem>("writing");
+  const posts = await getData<ProjectItem>("posts");
   const music = await getData<MusicItem>("music");
   const books = await getData<BookItem>("books");
-  const blogPosts = [
-    ...writing,
-    ...projects.filter((p) => p.blog),
-  ];
   let wikipediaUrls: string[] = [];
   try {
     const raw = fs.readFileSync(path.join(process.cwd(), "data", "wikipics.json"), "utf-8");
@@ -122,7 +118,7 @@ export default async function Home() {
 
           <section id="posts" className="scroll-mt-8 mb-16 mt-4">
             <SectionHeader title="posts" />
-            <WritingList posts={blogPosts} />
+            <WritingList posts={posts} />
             <a
               href="https://github.com/alexhamidi"
               target="_blank"
@@ -138,7 +134,7 @@ export default async function Home() {
 
           <section id="projects" className="scroll-mt-8 mb-16 mt-10">
             <SectionHeader title="projects" />
-            <ProjectSection projects={projects} />
+            <ProjectSection projects={projects.filter((p) => !p.blog)} />
             <a
               href="/software"
               className="mt-4 inline-block text-[13px] text-neutral-400 no-underline border-b border-neutral-300 hover:border-black hover:text-black transition-colors"
