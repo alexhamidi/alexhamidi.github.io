@@ -28,7 +28,6 @@ export default function WritingList({
         const inner = (
           <>
             <span className="text-[17px] font-normal leading-snug text-neutral-800 group-hover:text-neutral-900 transition-colors truncate min-w-0 flex-1">
-              {post.featured && <span className="mr-2" aria-hidden>★</span>}
               {post.title}
             </span>
             <span className="text-[13px] text-neutral-500 flex-shrink-0 tabular-nums tracking-wide uppercase">
