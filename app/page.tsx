@@ -64,7 +64,7 @@ export default async function Home() {
           Alex Hamidi
         </h1>
         <p className="mt-4 text-base text-neutral-600 leading-relaxed">
-        I’m a software engineer studying CS and running SDxUCSD (a community of builders and founders). Previously, I worked on search infrastructure at Clado and automations at Amazon. This is my blog where I post about things I’m interested in, mostly related to tech and LLMs
+        I’m a software engineer studying Computer Science, running SDxUCSD (builder community), and training diffusion models for Data Assimilation at <a href="https://scripps.ucsd.edu/profiles/mmorzfeld" target="_blank" rel="noopener noreferrer" className="text-black no-underline border-b border-neutral-300 hover:border-black transition-colors">Scripps</a>. Previously, I worked on search infrastructure at Clado and automations at Amazon.
         </p>
 
 {/*
