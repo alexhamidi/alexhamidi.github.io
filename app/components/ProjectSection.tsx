@@ -245,31 +245,33 @@ export default function ProjectSection({ projects, showDates = false, fullWidth 
           const inner = (
             <>
               <ProjectMedia project={project} />
-              <div className="flex items-center gap-2 mb-1">
-                <h3 className="text-sm font-normal text-neutral-700 text-balance">
-                  {project.title}
-                  {project.blog && !hideBlogTag && (
-                    <span className="ml-2 px-1.5 py-0.5 text-[10px] font-medium bg-neutral-100 text-neutral-500 rounded lowercase transition-colors group-hover:bg-neutral-200 group-hover:text-black">
-                      blog
+              <div className="group">
+                <div className="flex items-center gap-2 mb-1">
+                  <h3 className="text-sm font-normal text-neutral-700 text-balance group-hover:text-neutral-900 transition-colors">
+                    {project.title}
+                    {project.blog && !hideBlogTag && (
+                      <span className="ml-2 px-1.5 py-0.5 text-[10px] font-medium bg-neutral-100 text-neutral-500 rounded lowercase transition-colors group-hover:bg-neutral-200 group-hover:text-black">
+                        blog
+                      </span>
+                    )}
+                  </h3>
+                  {project.badge_path && (
+                    <img
+                      src={project.badge_path}
+                      alt=""
+                      className="h-[17px] w-[17px] rounded border-[px] border-neutral-200 object-cover flex-shrink-0"
+                    />
+                  )}
+                  {showDates && (
+                    <span className="text-sm text-neutral-400 ml-auto flex-shrink-0">
+                      {project.date}
                     </span>
                   )}
-                </h3>
-                {project.badge_path && (
-                  <img
-                    src={project.badge_path}
-                    alt=""
-                    className="h-[17px] w-[17px] rounded border-[px] border-neutral-200 object-cover flex-shrink-0"
-                  />
-                )}
-                {showDates && (
-                  <span className="text-sm text-neutral-400 ml-auto flex-shrink-0">
-                    {project.date}
-                  </span>
-                )}
+                </div>
+                <p className="text-neutral-400 leading-relaxed text-[13px] line-clamp-3 group-hover:text-neutral-600 transition-colors">
+                  {project.description}
+                </p>
               </div>
-              <p className="text-neutral-400 leading-relaxed text-[13px] line-clamp-3">
-                {project.description}
-              </p>
             </>
           );
 
@@ -294,7 +296,7 @@ export default function ProjectSection({ projects, showDates = false, fullWidth 
                   window.open(project.link, "_blank", "noopener,noreferrer");
                 }
               }}
-              className="group block text-left cursor-pointer hover:text-neutral-900 outline-none w-full"
+              className="block text-left cursor-pointer outline-none w-full"
               style={{
                 opacity: selectedTitle === project.title && !isClosing ? 0 : 1,
                 transition: "opacity 80ms",
