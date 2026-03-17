@@ -1,13 +1,74 @@
 ---
 title: "post-training qwen to reason deductively"
 description: "building a search agent that reasons deductively and cites every claim, instead of outputting a text wall"
-date: "2025-02-01"
+date: "2026-02-01"
 link: "https://antiwall.vercel.app"
 order: 2
 image: "/projects/antiwall.png"
 ---
+### motivation
 
-its 2am and i dont feel like writing a blog yet but
+LLMs, especially GPT, answer factual queries with lengthy, hedging responses that often don't even address your query in a specific, rigorous manner. xAI is trying to solve this problem with a beefy agent harness + post training, and Claude has sorta solved it with pretraining/prompting, but I decided to take a shot.
 
-motivation:
-LLMs (esp. gpt) output a 'text wall' and lack rigor. This is very annoying. grok purportedly fixes this but it doesnt. can it really be THAT hard?
+I browsed through [ChatbotArena's prompt/response pairs dataset](<link to chatbotarena dataset>) and pulled ~100 prompts that fit into the category I'm focusing on (subjective). Examples:
+
+- "Is privacy a universal right?"
+- "If I am allergic to peanuts, but I am not allergic to watermelon, is it safe for me to eat a slice of watermelon that has previously had a peanut on it, but now does not?"
+- "Compare Donald Trump and Joe Biden and determine which individual is a better president, with a bullet point list to justify your conclusion"
+
+These are not task-based queries or quantitative questions, they are subjective. Here's what GPT does with one:
+
+![GPT response to Trump vs Biden](/posts/ss.png)
+
+This is a wall of text that cites no specific data and buries the actual answer in hedges, separators, bullets, and headers that add no information. A more useful response would open with a direct answer, support every non-trivial claim with a citation to a primary source, and stop there. The LLM should act only as a reasoner, not as a retriever — it shouldn't invent facts, it should find them.
+
+### annotation
+
+With these principles in mind, I annotated all 100 queries. This involved both content and citations, in the following format:
+```
+A: [direct answer]. [claim]{Source: publication, title ("supporting quote") (url)}.
+```
+
+For example:
+```
+USER: Is it bad to scratch a mosquito bite?
+
+A: Yes. Scratching [irritates the wound and increases the chance of infection]
+{Source: Cleveland Clinic, What Happens When a Mosquito Bite Gets Infected?
+("Scratching the bite to the point of bleeding can open the door for a bacterial
+skin infection") (https://health.clevelandclinic.org/...)}.
+```
+
+Every factual claim is bracketed and attributed to a specific source with a quote confirming the claim. If a claim can't be sourced, it isn't made.
+
+### agent harness
+
+Before building the retrieval pipeline, I wrapped the model in a simple agent harness: a loop that lets it call tools, inspect the results, and decide whether it has enough to answer. This is the same basic setup Grok uses, just much lighter. The key insight is that the model needs to be able to say "I don't have enough yet" and keep searching, rather than hallucinating a citation or hedging through an answer it doesn't actually have.
+
+### retrieval pipeline
+
+The retrieval pipeline has two components: an evaluator and a search harness.
+
+The evaluator is simple: after each tool call, the model reflects on the quality of what it found and rates it either *insufficient* or *sufficient*. If insufficient, it searches again with a different query. I run this across multiple candidates and take the best. I considered RL here but prompt engineering got me there without it.
+
+The search harness exposes three tools: markdown web fetch, standard web search, and a custom neural search over a curated index of Wikipedia and high-quality reference sites. The neural search uses semantic similarity so the model can find relevant passages even when query phrasing doesn't match the source text exactly.
+
+Getting reliable retrieval took the most iteration. The failure mode isn't the model hallucinating — it's the model settling for a mediocre source when a better one exists two searches away.
+
+### fine-tuning
+
+Good retrieval got the facts right, but the style was still off. Even with detailed prompting, the model would slip back into the hedging, over-qualified register that makes GPT responses so frustrating.
+
+So I SFT'd Qwen 32B on the 100 annotated examples using LoRA, running training on Modal. The dataset is small, but the examples are high quality and the task is narrow — the model just needs to learn the citation format and direct-answer style, not new facts. It worked.
+
+### prompt optimization
+
+The final system prompt was produced by Claude Code running in a VM: it executes tests against the 100 examples, reads the failures, rewrites the prompt, and repeats. I run a thin wrapper over Claude to automate the outer loop, so it's essentially auto-optimized. I also told it to look at the leaked system prompts from other AI tools and update formatting to adhere to best practices, which it incorporated.
+
+### evals
+
+I ran evals on all 100 prompts and did a personal blind preference test against GPT-4o. antiwall won 80% of the time.
+
+---
+
+Try it: [antiwall.vercel.app](https://antiwall.vercel.app)

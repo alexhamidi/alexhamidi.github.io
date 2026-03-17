@@ -88,6 +88,9 @@ export default async function WritingPage({
             remarkPlugins={[remarkGfm, remarkMath]}
             rehypePlugins={[rehypeKatex]}
             components={{
+              img({ src, alt }) {
+                return <img src={src} alt={alt} className="mx-auto block" />;
+              },
               code({ className, children, ...props }) {
                 const match = /language-(\w+)/.exec(className || "");
                 const isBlock = match || String(children).includes("\n");
